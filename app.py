@@ -1,18 +1,25 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+from news_fetcher import fetch_news
 
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/")
 def home():
-    return "Hello World"
+    return "Market Narrative Tracker — backend running"
 
-@app.route("/data")
-def data():
+
+@app.route("/api/news")
+def news():
+    articles = fetch_news("Artificial Intelligence")
+
     return jsonify({
-        "name":"AI"
+        "topic": "AI",
+        "articles": articles
     })
+
 
 if __name__ == "__main__":
     app.run(debug=True)
