@@ -13,7 +13,12 @@ def home():
 
 @app.route("/api/news")
 def news():
-    topic = request.args.get("topic", "AI")
+    topic = request.args.get("topic", "AI").strip()
+
+    if not topic:
+        return jsonify({
+            "error": "Topic cannot be empty"
+        }), 400
 
     articles = fetch_news(topic)
 
