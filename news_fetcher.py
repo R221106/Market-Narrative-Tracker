@@ -17,7 +17,11 @@ def fetch_news(topic):
         "apiKey": API_KEY
     }
 
-    response = requests.get(BASE_URL, params=params)
+    response = requests.get(
+        BASE_URL,
+        params=params,
+        timeout=5
+    )
 
     print("Status code:", response.status_code)
 
