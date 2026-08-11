@@ -9,6 +9,9 @@ BASE_URL = "https://newsapi.org/v2/everything"
 
 
 def fetch_news(topic):
+    if not topic or not topic.strip():
+        return []
+
     params = {
         "q": topic,
         "language": "en",
@@ -17,25 +20,42 @@ def fetch_news(topic):
         "apiKey": API_KEY
     }
 
-    response = requests.get(
-        BASE_URL,
-        params=params,
-        timeout=5
-    )
+    try:
+        response = requests.get(
+            BASE_URL,
+            params=params,
+            timeout=5
+        )
 
-    print("Status code:", response.status_code)
+        response.raise_for_status()
+        data = response.json()
 
-    data = response.json()
+    except requests.exceptions.Timeout:
+        print("NewsAPI request timed out")
+        return []
+
+    except requests.exceptions.RequestException as e:
+        print("NewsAPI request failed:", e)
+        return []
 
     articles = data.get("articles", [])
 
-    print("Number of articles:", len(articles))
+    clean_articles = []
 
-    for article in articles[:5]:
-        print(article.get("title", "No title"))
+    for article in articles:
+        clean_articles.append({
+            "title": article.get("title", "No title"),
+            "description": article.get("description", ""),
+            "url": article.get("url", ""),
+            "source": article.get("source", {}).get("name", "Unknown"),
+            "publishedAt": article.get("publishedAt", "")
+        })
 
-    return articles
+    return clean_articles
 
 
 if __name__ == "__main__":
-    fetch_news("Artificial Intelligence")
+    articles = fetch_news("Artificial Intelligence")
+
+    for article in articles[:5]:
+        print(article["title"])
