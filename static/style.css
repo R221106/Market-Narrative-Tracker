@@ -1,1 +1,244 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+html,
+body {
+    width: 100%;
+    height: 100%;
+    font-family: "Bricolage Grotesque", sans-serif;;
+}
+
+.main {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.backgroundVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    position: fixed;
+    
+}
+
+
+.overlayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    
+}
+
+.content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center ;
+    flex-direction: column;
+    text-align: center;
+    gap:20px;
+    color: white;
+    padding: 20px;
+    z-index: 1;
+}
+
+.content h1 {
+    font-size: 5rem;
+    margin-bottom: 15px;
+    letter-spacing: 0.3rem;
+}
+
+
+.search-input{
+    width:60%;
+    height: 10%;
+    display:flex;
+    background-color: rgba(240, 255, 255, 0.119);
+    align-items: center;
+    justify-content: center;
+    border-radius: 60px;
+    padding-right:20px;
+    backdrop-filter: blur(4px) saturate(200%);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+.search-input input{
+    background: transparent;
+    flex:1;
+    border:2px solid transparent;
+    outline:none;
+    padding:24px 20px;
+    font-size:20px;
+    color: rgb(240, 238, 238);
+}
+
+.search-input input:focus-within{
+    width:100%;
+    height: 10%;
+    border-radius: 60px;
+    box-shadow: 0 0 20px rgb(247, 234, 234);
+}
+
+::placeholder{
+    color: rgb(229, 249, 250);
+}
+
+.search-input button img{
+    width: 25px;
+}
+
+.search-input button{
+    border:0;
+    border-radius:50%;
+    width:35px;
+    height:35px;
+    backdrop-filter: blur(2px) saturate(200%);
+    cursor: pointer;
+}
+
+.infinite-tracker{
+    width:40%;
+    overflow: hidden;
+    padding: 20px 0;
+    margin-top:50px;
+    position: relative;
+}
+
+.card{
+    flex:0 0 auto;
+    width: 160px;
+    height: 40px;
+    background: #ffffff67;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+    margin:0 10px;
+}
+
+.infinite-track{
+    display: flex;
+    width:max-content;
+    animation: scroll 20s linear infinite;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns: repeat(9,1fr);
+    grid-template-rows:  repeat(10,100px);
+    gap: 1rem;
+    padding:20px;
+    grid-template-areas: 
+    "headlines headlines headlines headlines headlines top-market top-market top-market top-market"
+    "headlines headlines headlines headlines headlines top-market top-market top-market top-market"
+    "headlines headlines headlines headlines headlines top-market top-market top-market top-market"
+    "headlines headlines headlines headlines headlines top-market top-market top-market top-market"
+    "ai-summary ai-summary ai-summary ai-summary sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis"
+    "ai-summary ai-summary ai-summary ai-summary sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis"
+    "ai-summary ai-summary ai-summary ai-summary sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis"
+    "ai-summary ai-summary ai-summary ai-summary market-charts market-charts market-charts market-charts market-charts"
+    "ai-summary ai-summary ai-summary ai-summary market-charts market-charts market-charts market-charts market-charts"
+    "ai-summary ai-summary ai-summary ai-summary market-charts market-charts market-charts market-charts market-charts";
+}
+
+.dashboard > *{
+    background: rgba(0, 0, 0, 0.231);
+    backdrop-filter: blur(2px) saturate(200%);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius:30px;
+    min-height: 300px;
+}
+.headlines{
+    grid-area: headlines;
+}
+.top-market{
+    grid-area: top-market;
+}
+.ai-summary{
+    grid-area:ai-summary;
+}
+.sentimental-analysis{
+    grid-area:sentimental-analysis;
+}
+.market-charts{
+    grid-area:market-charts;
+}
+
+@media (max-width:900px){
+    .search-input{
+        width:90%;
+        height: 10%;;
+    }
+    .search-input input {
+        font-size: 16px;
+        padding: 15px;
+    }
+    .infinite-tracker {
+        width: 90%;
+    }
+    .dashboard{
+        display:grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: repeat(6,150px)  ;
+        grid-template-areas:
+        "headlines headlines top-market top-market"
+        "headlines headlines top-market top-market"
+        "ai-summary ai-summary sentimental-analysis sentimental-analysis"
+        "ai-summary ai-summary sentimental-analysis sentimental-analysis"
+        "ai-summary ai-summary market-charts market-charts"
+        "ai-summary ai-summary market-charts market-charts";
+    }
+}
+@media (max-width:600px){
+    .content h1{
+        font-size: 3rem;
+        letter-spacing: 0.1rem;
+    }
+    .search-input{
+        width:90%;
+        height: 10%;;
+    }
+    .search-input input {
+        font-size: 16px;
+        padding: 15px;
+    }
+    .infinite-tracker {
+        width: 90%;
+    }
+    .dashboard{
+        display:grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(5,350px)  ;
+        grid-template-areas:
+        "headlines"
+        "top-market"
+        "ai-summary"
+        "sentimental-analysis"
+        "market-charts";
+        gap: 20px;
+    }
+    
+}

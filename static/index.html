@@ -1,1 +1,67 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Market Tracker App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <section class="main">
+        <video autoplay loop muted playsinline class="backgroundVideo">
+            <source src="../Videos/Background.mp4" type="video/mp4">
+        </video>
+        <div class="overlayer"></div>
+        <div class="content"> 
+            <h1>LoomLine</h1> 
+            <div class="search-input">
+                <input id="search-input" type="text" placeholder="Search whats in the Market....">                    
+                <button id="search-button" type="submit">
+                    <img src="../Images/SearchButton.png" alt="seachButtonImg">
+                </button>
+            </div>
+            <div class="infinite-tracker">
+                <div class="infinite-track">
+                    <div class="card">NVIDIA</div>
+                    <div class="card">Bitcoin</div>
+                    <div class="card">AI rising</div>
+                    <div class="card">Oil</div>
+                    <div class="card">Tesla</div>
+                    <!--Duplicate-->
+                    <div class="card">NVIDIA</div>
+                    <div class="card">Bitcoin</div>
+                    <div class="card">AI rising</div>
+                    <div class="card">Oil</div>
+                    <div class="card">Tesla</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="dashboard">
+        <div class="headlines">
+            <h2>Recent Headlines</h2> 
+            <hr>
+            <div id="news-container"></div>
+        </div>
+        <div class="top-market">
+            <h2>Top in the Market</h2> <hr>
+        </div>
+        <div class="ai-summary">
+            <h2>AI SUMMARY</h2> <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos nobis neque nemo natus pariatur, dignissimos fuga molestiae sunt excepturi laudantium impedit quasi. Quis aliquam maxime dolores eaque dicta! Molestiae, nihil.</p>
+        </div>
+        <div class="sentimental-analysis">
+            <h2>Sentimental-analysis</h2> <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos nobis neque nemo natus pariatur, dignissimos fuga molestiae sunt excepturi laudantium impedit quasi. Quis aliquam maxime dolores eaque dicta! Molestiae, nihil.</p>
+        </div>
+        <div class="market-charts">
+            <h2>Market Analysis</h2> <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos nobis neque nemo natus pariatur, dignissimos fuga molestiae sunt excepturi laudantium impedit quasi. Quis aliquam maxime dolores eaque dicta! Molestiae, nihil.</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
