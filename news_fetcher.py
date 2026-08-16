@@ -39,17 +39,16 @@ def fetch_news(topic):
         return []
 
     articles = data.get("articles", [])
-
-    clean_articles = []
-
-    for article in articles:
-        clean_articles.append({
-            "title": article.get("title", "No title"),
-            "description": article.get("description", ""),
-            "url": article.get("url", ""),
-            "source": article.get("source", {}).get("name", "Unknown"),
-            "publishedAt": article.get("publishedAt", "")
-        })
+    clean_articles=[
+        {
+        "title": article.get("title", "No title"),
+        "description": article.get("description", ""),
+        "url": article.get("url", ""),
+        "source": article.get("source", {}).get("name", "Unknown"),
+        "publishedAt": article.get("publishedAt", "")
+        }
+        for article in articles
+    ]
 
     return clean_articles
 
