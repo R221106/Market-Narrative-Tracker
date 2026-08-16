@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hello</title>
-    <link rel="stylesheet" href="style-search.css">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <nav class="sidebar">
@@ -43,34 +44,43 @@
             </div>
         </header>
     </nav>
-    <section class="main">
+    <section class="dashboard-main">
         <video autoplay loop muted playsinline class="backgroundVideo">
             <source src="../Videos/Background.mp4" type="video/mp4">
         </video>
         <div class="overlayer"></div>
-        <div class="content"> 
+        <div class="dashboard-content"> 
             <h1>LoomLine</h1> 
-            <div class="search-input">
-                <input id="search-input" type="text" placeholder="Search whats in the Market....">                    
-                <button id="search-button" type="submit">
-                    <img src="../Images/SearchButton.png" alt="seachButtonImg">
-                </button>
-            </div>
         </div>
     </section>
-    <div class="search-layout">
-        <div id="search-result">
-            <p id="search-topic"></p>
-            <p id="result-count"></p>
-            <div id="search-results"></div>
+    <div class="dashboard">
+        <div class="headlines">
+            <h2>Recent Headlines</h2> 
+            <hr>
+            <div id="news-container"></div>
+            <div id="sentimental-badge">
+            </div>
+        </div>
+        <div class="top-market">
+            <h2>Top in the Market</h2> <hr>
         </div>
         <div class="ai-summary">
             <h2>AI SUMMARY</h2> <hr>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos nobis neque nemo natus pariatur, dignissimos fuga molestiae sunt excepturi laudantium impedit quasi. Quis aliquam maxime dolores eaque dicta! Molestiae, nihil.</p>
         </div>
+        <div class="sentimental-analysis">
+            <h2>Sentimental-analysis</h2> <hr>
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos nobis neque nemo natus pariatur, dignissimos fuga molestiae sunt excepturi laudantium impedit quasi. Quis aliquam maxime dolores eaque dicta! Molestiae, nihil.</p>
+        </div>
+        <div class="market-chart-1">
+            <h2>Market Analysis</h2> <hr>
+            <canvas id="chart-1"></canvas>
+        </div>
+        <div class="market-chart-2">
+            <h2>Market Analysis</h2> <hr>
+            <canvas id="chart-2"></canvas>
+        </div>
     </div>
-        
-    <script src="search.js"></script>
-    
+    <script src="dashboard.js"></script>
 </body>
 </html>
