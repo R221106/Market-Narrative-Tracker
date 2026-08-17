@@ -1,61 +1,142 @@
 // Dashboard.js
 
-const marketChart1=document.getElementById("chart-1");
-const pieChart = new Chart(marketChart1, {
-  type: 'pie',
-  data: {
-    labels:["AI","Nividia","Bitcoin","Oil","Tesla"],
-    datasets:[{label:"Market Interest",data:[80,90,65,40,70]}]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'right',
-      }
+async function loadDashboard() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/dashboard");
+
+        if (!response.ok) {
+            throw new Error("Failed to load dashboard data");
+        }
+
+        const data = await response.json();
+
+        renderCharts(data.topics, data.counts);
+        loadHeadlines();
+
+    } catch (error) {
+        console.error("Dashboard error:", error);
     }
-  },
-});
+}
 
-const marketChart2=document.getElementById("chart-2");
-const lineChart = new Chart(marketChart2, {
-  type: 'line',
-  data: {
-    labels:["AI","Nividia","Bitcoin","Oil","Tesla"],
-    datasets:[{label:"Market Interest",data:[80,90,65,40,70]}]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'bottom',
-      }
+function renderCharts(topics, counts) {
+    const marketChart1 = document.getElementById("chart-1");
+
+    new Chart(marketChart1, {
+        type: "pie",
+        data: {
+            labels: topics,
+            datasets: [
+                {
+                    label: "Market Interest",
+                    data: counts
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "right"
+                }
+            }
+        }
+    });
+
+    const marketChart2 = document.getElementById("chart-2");
+
+    new Chart(marketChart2, {
+        type: "line",
+        data: {
+            labels: topics,
+            datasets: [
+                {
+                    label: "Market Interest",
+                    data: counts
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+}
+
+async function loadHeadlines() {
+    try {
+        const response = await fetch(
+            "http://127.0.0.1:5000/api/news?topic=AI"
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to load headlines");
+        }
+
+        const data = await response.json();
+
+        const container = document.getElementById("news-container");
+
+        container.innerHTML = "";
+
+        data.articles.slice(0, 5).forEach(article => {
+            const card = document.createElement("div");
+
+            card.innerHTML = `
+                <h3>${article.title}</h3>
+                <p>${article.description || ""}</p>
+                <a href="${article.url}" target="_blank">Read more</a>
+                <hr>
+            `;
+
+            container.appendChild(card);
+        });
+
+    } catch (error) {
+        console.error("Headlines error:", error);
     }
-  },
-});
-const sidebar=document.querySelector(".sidebar");
-const toggleMenu = document.querySelector(".toggle-menu");toggleMenu.addEventListener("click", function () {
+}
 
-    sidebar.classList.toggle("collapsed");
+const sidebar = document.querySelector(".sidebar");
+const toggleMenu = document.querySelector(".toggle-menu");
 
-});
+if (toggleMenu) {
+    toggleMenu.addEventListener("click", function () {
+        sidebar.classList.toggle("collapsed");
+    });
+}
 
-function sentimentalBadge(sentiment){
-    const sentimental=document.getElementById("sentimental-badge");
+function sentimentalBadge(sentiment) {
+    const sentimental =
+        document.getElementById("sentimental-badge");
+
     sentimental.classList.add("badge");
-    if(sentiment=="positive"){
-        sentimental.innerHTML=`
-        <img src="../Images/Positive.png" alt="negative-badge">
+
+    if (sentiment === "positive") {
+        sentimental.innerHTML = `
+            <img
+                src="../Images/Positive.png"
+                alt="positive-badge"
+            >
         `;
-    }
-    else if(sentiment=="neutral"){
-        sentimental.innerHTML=`
-        <img src="../Images/Neutral.png" alt="negative-badge">
+    } else if (sentiment === "neutral") {
+        sentimental.innerHTML = `
+            <img
+                src="../Images/Neutral.png"
+                alt="neutral-badge"
+            >
         `;
-    }
-    else{
-        sentimental.innerHTML=`
-        <img src="../Images/Negative.png" alt="negative-badge">
+    } else {
+        sentimental.innerHTML = `
+            <img
+                src="../Images/Negative.png"
+                alt="negative-badge"
+            >
         `;
     }
 }
+
+loadDashboard();

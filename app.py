@@ -10,6 +10,19 @@ CORS(app)
 def home():
     return "Market Narrative Tracker — backend running"
 
+@app.route("/api/dashboard")
+def dashboard():
+    topics = ["AI", "Nvidia", "Bitcoin", "Oil", "Tesla"]
+    counts = []
+
+    for topic in topics:
+        articles = fetch_news(topic)
+        counts.append(len(articles))
+
+    return jsonify({
+        "topics": topics,
+        "counts": counts
+    })
 
 @app.route("/api/news")
 def news():
