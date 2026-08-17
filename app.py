@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from news_fetcher import fetch_news
 from sentiment import analyze_articles, analyze_articles_individually 
+from keywords import extract_keywords
 
 app = Flask(__name__)
 CORS(app)
@@ -54,6 +55,21 @@ def news():
     return jsonify({
         "topic": topic,
         "articles": articles
+    })
+
+@app.route("/api/keywords")
+def keywords():
+    topic = request.args.get("topic", "AI").strip()
+    if not topic:
+        return jsonify({"error": "Topic cannot be empty"}), 400
+
+    articles = fetch_news(topic)
+    top_keywords = extract_keywords(articles, top_n=10)
+
+    return jsonify({
+        "topic": topic,
+        "count": len(top_keywords),
+        "keywords": top_keywords
     })
 
 
