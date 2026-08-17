@@ -1,11 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from news_fetcher import fetch_news
+from sentiment import analyze_articles, analyze_articles_individually 
 
 app = Flask(__name__)
 CORS(app)
-
-from sentiment import analyze_articles  # add this at the top
 
 @app.route("/api/sentiment")
 def sentiment():
@@ -14,11 +13,13 @@ def sentiment():
         return jsonify({"error": "Topic cannot be empty"}), 400
 
     articles = fetch_news(topic)
-    result = analyze_articles(articles)
+    overall = analyze_articles(articles)
+    individual = analyze_articles_individually(articles)
 
     return jsonify({
         "topic": topic,
-        "sentiment": result
+        "overall": overall,
+        "articles": individual
     })
 
 @app.route("/")
