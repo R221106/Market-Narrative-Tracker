@@ -5,6 +5,21 @@ from news_fetcher import fetch_news
 app = Flask(__name__)
 CORS(app)
 
+from sentiment import analyze_articles  # add this at the top
+
+@app.route("/api/sentiment")
+def sentiment():
+    topic = request.args.get("topic", "AI").strip()
+    if not topic:
+        return jsonify({"error": "Topic cannot be empty"}), 400
+
+    articles = fetch_news(topic)
+    result = analyze_articles(articles)
+
+    return jsonify({
+        "topic": topic,
+        "sentiment": result
+    })
 
 @app.route("/")
 def home():
