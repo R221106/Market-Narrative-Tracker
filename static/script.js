@@ -7,8 +7,43 @@ searchButton.addEventListener("click",function(){
 });
 
 const sidebar=document.querySelector(".sidebar");
-const toggleMenu = document.querySelector(".toggle-menu");toggleMenu.addEventListener("click", function () {
+const toggleMenu = document.querySelector(".toggle-menu");
+toggleMenu.addEventListener("click", function () {
 
     sidebar.classList.toggle("collapsed");
 
 });
+
+async function getkeywords(keywords) {
+    try{
+        const response=await fetch( `http://127.0.0.1:5000/api/keywords`); // fetching the data
+        if(!response.ok) throw new Error("Failed to fetch the error!")
+        const data = await response.json();
+        displayKeywords(data.keywords);
+        
+    }
+    catch(error){
+        console.error("Error fetching keywords:", error);
+    } 
+}
+
+function displayKeywords(keyword){
+    const track=document.getElementById("infinite-track");
+    track.innerHTML="";
+    const allKeyword=[...keyword,...keyword];
+    //Take everything inside this array and spread it out individually.
+    allKeyword.forEach(keyword=>{
+        const card=document.createElement("div");
+        card.classList.add("card");
+        card.innerHTML=`
+        <h2>${keyword.word}</h2>
+        <p>Articles ${keyword.count} found.</p>
+        `
+        card.addEventListener("click",function(){
+            window.location.href=`search.html?topic=${encodeURIComponent(keyword.word)}`;
+        });
+        track.appendChild(card);
+    });
+}
+
+getkeywords();
