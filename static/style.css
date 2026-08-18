@@ -340,15 +340,33 @@ body {
 
 .headlines{
     grid-area: headlines;
+    padding:13px;
 }
 
-.headlines .sentimental-badge img{
-    width:40px;
-    height:40px;
+.headlines .sentiments {
     display:flex;
     align-items: center;
-    flex-direction: row;
+    flex-direction: column;
+    flex-shrink: 0;
+}
 
+.headline-title{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:5px;
+}
+
+.headline-title h3{
+    margin:0;
+    flex:1;
+}
+
+.headlines .sentiments img{
+    width:40px;
+    height:40px;
+    object-fit: contain;
+    position:left;
 }
 
 .top-market{
