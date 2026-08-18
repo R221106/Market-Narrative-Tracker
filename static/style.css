@@ -15,7 +15,7 @@ body {
     position: relative;
     height: 100vh;
     margin-left:232px;
-    width:calc(100%-232px);
+    width:calc(100% - 232px);
     transition: margin-left 0.3s ease,width 0.3s ease;
 }
 
@@ -27,7 +27,7 @@ body {
 .dashboard-main{
     position: relative;
     margin-left:232px;
-    width:calc(100%-232px);
+    width:calc(100% - 232px);
     transition: margin-left 0.3s ease,width 0.3s ease;
 }
 
@@ -250,7 +250,7 @@ body {
 }
 
 .infinite-tracker{
-    width:40%;
+    width:60%;
     overflow: hidden;
     padding: 20px 0;
     margin-top:50px;
@@ -259,22 +259,39 @@ body {
 
 .card{
     flex:0 0 auto;
+    flex-direction: column;
+    row-gap: 10;
     width: 160px;
-    height: 40px;
-    background: #ffffff67;
+    height: 60px;
+    background: #ffffff36;
+    backdrop-filter: blur(4px) saturate(200%);
     border-radius: 20px;
+    border-color: aliceblue;
+    border: 2px solid transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgb(255, 255, 255);
     font-weight: bold;
     margin:0 10px;
+    transition: border-color 0.2s ease;
 }
 
-.infinite-track{
+.card:hover{
+    border-color: rgb(230, 229, 229);
+}
+
+.card p{
+    font-size: 12px;
+}
+
+#infinite-track{
     display: flex;
     width:max-content;
     animation: scroll 20s linear infinite;
+}
+
+.infinite-tracker:hover #infinite-track{
+    animation-play-state:paused;
 }
 
 @keyframes scroll {
