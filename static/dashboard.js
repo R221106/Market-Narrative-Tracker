@@ -21,11 +21,12 @@ const marketChart2=document.getElementById("chart-2");
 const lineChart = new Chart(marketChart2, {
   type: 'line',
   data: {
-    labels:["AI","Nividia","Bitcoin","Oil","Tesla"],
-    datasets:[{label:"Market Interest",data:[80,90,65,40,70]}]
+    labels:trendLabels,
+    datasets:[{label:"Narrative Volume",data:trendData,borderWidth:3,tension:0.4,fill:false}]
   },
   options: {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'bottom',
