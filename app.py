@@ -3,6 +3,8 @@ from flask_cors import CORS
 from news_fetcher import fetch_news
 from sentiment import analyze_articles, analyze_articles_individually 
 from keywords import extract_keywords
+from trend import analyze_trend
+from sources import analyze_sources
 
 app = Flask(__name__)
 CORS(app)
@@ -72,6 +74,30 @@ def keywords():
         "keywords": top_keywords
     })
 
+@app.route("/api/trend")
+def trend():
+    topic = request.args.get("topic", "AI").strip()
+    if not topic:
+        return jsonify({"error": "Topic cannot be empty"}), 400
+
+    articles = fetch_news(topic)
+    result = analyze_trend(articles, topic)
+
+    return jsonify(result)
+
+@app.route("/api/sources")
+def sources():
+    topic = request.args.get("topic", "AI").strip()
+    if not topic:
+        return jsonify({"error": "Topic cannot be empty"}), 400
+
+    articles = fetch_news(topic)
+    top_sources = analyze_sources(articles)
+
+    return jsonify({
+        "topic": topic,
+        "sources": top_sources
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
