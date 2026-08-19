@@ -77,7 +77,7 @@ def keywords():
 
 @app.route("/api/trend")
 def trend():
-    topic = request.args.get("topic", "AI").strip()
+    topic = request.args.get("topic", "Bitcoin").strip()
     if not topic:
         return jsonify({"error": "Topic cannot be empty"}), 400
 

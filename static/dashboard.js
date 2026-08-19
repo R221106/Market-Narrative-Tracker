@@ -68,25 +68,43 @@ function renderCharts(topics, counts) {
 
 async function loadHeadlines() {
     try {
-        const response = await fetch(
+        const newsResponse = await fetch(
             "http://127.0.0.1:5000/api/news?topic=AI"
         );
 
-        if (!response.ok) {
+        if (!newsResponse.ok) {
             throw new Error("Failed to load headlines");
         }
 
-        const data = await response.json();
+        const newsData = await newsResponse.json();
+
+        const sentimelResponse = await fetch(
+            "http://127.0.0.1:5000/api/sentiment?topic=AI"
+        );
+
+        if (!sentimelResponse.ok) {
+            throw new Error("Failed to load headlines");
+        }
+
+        const sentimentalData = await sentimelResponse.json();
+
 
         const container = document.getElementById("news-container");
 
         container.innerHTML = "";
 
-        data.articles.slice(0, 5).forEach(article => {
+        newsData.articles.slice(0, 5).forEach(article => {
             const card = document.createElement("div");
-
+            const sentimentArticle=sentimentalData.articles.find(
+              item=>item.url===article.url
+            );
             card.innerHTML = `
-                <h3>${article.title}</h3>
+                <div class="headline-title">
+                    <h3>${article.title}</h3>
+                    <div class="sentiments">
+                    ${getSentimentalBadge(sentimentArticle ? sentimentArticle.sentiment:"neutral")}
+                    </div>
+                </div>
                 <p>${article.description || ""}</p>
                 <a href="${article.url}" target="_blank">Read more</a>
                 <hr>
@@ -109,28 +127,23 @@ if (toggleMenu) {
     });
 }
 
-function sentimentalBadge(sentiment) {
-    const sentimental =
-        document.getElementById("sentimental-badge");
-
-    sentimental.classList.add("badge");
-
+function getSentimentalBadge(sentiment) {
     if (sentiment === "positive") {
-        sentimental.innerHTML = `
+        return `
             <img
                 src="../Images/Positive.png"
                 alt="positive-badge"
             >
         `;
     } else if (sentiment === "neutral") {
-        sentimental.innerHTML = `
+        return `
             <img
                 src="../Images/Neutral.png"
                 alt="neutral-badge"
             >
         `;
     } else {
-        sentimental.innerHTML = `
+        return `
             <img
                 src="../Images/Negative.png"
                 alt="negative-badge"
@@ -139,4 +152,91 @@ function sentimentalBadge(sentiment) {
     }
 }
 
+async function loadTrending() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/trend?topic=Bitcoin");
+        if (!response.ok) {
+            throw new Error("Failed to load dashboard data");
+        }
+        const data = await response.json();
+        const hours=data.buckets.map(bucket=> bucket.hour.split(" ")[1]);
+        const counts=data.buckets.map(bucket=> bucket.count);
+        const topic=data.topic;
+        const trend=data.trend;
+        const trendInfo=document.getElementById("trend-info");
+        trendInfo.innerHTML=`Topic: ${topic} | Trend:${trend}`;
+        const TrendChart = document.getElementById("trend-chart");
+
+        new Chart(TrendChart, {
+            type: "line",
+            data: {
+                labels: hours,
+                datasets: [{label: topic,data: counts , tension:0.3}]},
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Time"
+                        }
+                    },
+
+                    y: {
+                        beginAtZero: true,
+
+                        title: {
+                            display: true,
+                            text: "No of Articles"
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: "top"
+                    }
+                }
+            }
+        });
+
+
+    } catch (error) {
+        console.error("Dashboard error:", error);
+    }
+}
+
+async function loadSources(){
+  try {
+        const response = await fetch("http://127.0.0.1:5000/api/sources");
+        if (!response.ok) throw new Error("Failed to load sources data");
+        const data = await response.json();
+        getSources(data.sources);
+        console.log(data.sources);
+
+    } catch (error) {
+        console.error("Top Sources error:", error);
+    }
+}
+
+function getSources(sources){
+  const container = document.getElementById("top-sources-container");
+  container.innerHTML = "";
+  sources.forEach(s => {
+      const sourceCard = document.createElement("div");
+      sourceCard.innerHTML = `
+          <div class="source-info">
+            <p><b>${s.source} </b>| ${s.count} articles <p>
+            <div class="source-share">${s.share}%</div>
+          </div>
+          <div class="source-bar">
+              <div class="source-bar-fill" style="width: ${s.share}%">
+              </div>
+          </div>
+          <br>
+      `;
+      container.appendChild(sourceCard);
+  });
+}
+loadSources();
+loadTrending();
 loadDashboard();
