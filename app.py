@@ -5,6 +5,7 @@ from sentiment import analyze_articles, analyze_articles_individually
 from keywords import extract_keywords
 from trend import analyze_trend
 from sources import analyze_sources
+from database import init_db, get_popular_topics
 
 app = Flask(__name__)
 CORS(app)
@@ -98,6 +99,13 @@ def sources():
         "topic": topic,
         "sources": top_sources
     })
+
+init_db()
+
+@app.route("/api/popular")
+def popular():
+    topics = get_popular_topics(limit=5)
+    return jsonify({"popular_topics": topics})
 
 if __name__ == "__main__":
     app.run(debug=True)
