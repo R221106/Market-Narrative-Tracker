@@ -19,7 +19,7 @@ async function getkeywords() {
         const response=await fetch( `http://127.0.0.1:5000/api/keywords`); // fetching the data
         if(!response.ok) throw new Error("Failed to fetch the error!")
         const data = await response.json();
-        displayKeywords(data.keywords);
+        //displayKeywords(data.keywords);
         
     }
     catch(error){

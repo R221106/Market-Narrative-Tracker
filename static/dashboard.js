@@ -152,4 +152,91 @@ function getSentimentalBadge(sentiment) {
     }
 }
 
+async function loadTrending() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/trend?topic=Bitcoin");
+        if (!response.ok) {
+            throw new Error("Failed to load dashboard data");
+        }
+        const data = await response.json();
+        const hours=data.buckets.map(bucket=> bucket.hour.split(" ")[1]);
+        const counts=data.buckets.map(bucket=> bucket.count);
+        const topic=data.topic;
+        const trend=data.trend;
+        const trendInfo=document.getElementById("trend-info");
+        trendInfo.innerHTML=`Topic: ${topic} | Trend:${trend}`;
+        const TrendChart = document.getElementById("trend-chart");
+
+        new Chart(TrendChart, {
+            type: "line",
+            data: {
+                labels: hours,
+                datasets: [{label: topic,data: counts , tension:0.3}]},
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Time"
+                        }
+                    },
+
+                    y: {
+                        beginAtZero: true,
+
+                        title: {
+                            display: true,
+                            text: "No of Articles"
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: "top"
+                    }
+                }
+            }
+        });
+
+
+    } catch (error) {
+        console.error("Dashboard error:", error);
+    }
+}
+
+async function loadSources(){
+  try {
+        const response = await fetch("http://127.0.0.1:5000/api/sources");
+        if (!response.ok) throw new Error("Failed to load sources data");
+        const data = await response.json();
+        getSources(data.sources);
+        console.log(data.sources);
+
+    } catch (error) {
+        console.error("Top Sources error:", error);
+    }
+}
+
+function getSources(sources){
+  const container = document.getElementById("top-sources-container");
+  container.innerHTML = "";
+  sources.forEach(s => {
+      const sourceCard = document.createElement("div");
+      sourceCard.innerHTML = `
+          <div class="source-info">
+            <p><b>${s.source} </b>| ${s.count} articles <p>
+            <div class="source-share">${s.share}%</div>
+          </div>
+          <div class="source-bar">
+              <div class="source-bar-fill" style="width: ${s.share}%">
+              </div>
+          </div>
+          <br>
+      `;
+      container.appendChild(sourceCard);
+  });
+}
+loadSources();
+loadTrending();
 loadDashboard();
