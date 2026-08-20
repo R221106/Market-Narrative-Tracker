@@ -306,7 +306,6 @@ body {
 .dashboard{
     display:grid;
     grid-template-columns: repeat(10,1fr);
-    grid-template-rows:  repeat(10,1fr);
     gap: 1rem;
     padding:20px;
     margin-left:232px;
@@ -315,11 +314,11 @@ body {
     grid-template-areas: 
     "headlines headlines headlines headlines headlines headlines top-market top-market top-market top-market "
     "headlines headlines headlines headlines headlines headlines top-market top-market top-market top-market "
-    "headlines headlines headlines headlines headlines headlines top-market top-market top-market top-market "
-    "headlines headlines headlines headlines headlines headlines top-market top-market top-market top-market "
-    "ai-summary ai-summary ai-summary ai-summary sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis"
-    "ai-summary ai-summary ai-summary ai-summary sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis"
-    "ai-summary ai-summary ai-summary ai-summary sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis sentimental-analysis"
+    "headlines headlines headlines headlines headlines headlines top-sources top-sources top-sources top-sources "
+    "headlines headlines headlines headlines headlines headlines top-sources top-sources top-sources top-sources "
+    "ai-summary ai-summary ai-summary ai-summary Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis"
+    "ai-summary ai-summary ai-summary ai-summary Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis"
+    "ai-summary ai-summary ai-summary ai-summary Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis"
     "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-2 market-chart-2 market-chart-2"
     "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-2 market-chart-2 market-chart-2"
     "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-2 market-chart-2 market-chart-2"
@@ -340,25 +339,73 @@ body {
 
 .headlines{
     grid-area: headlines;
+    padding:13px;
 }
 
-.headlines .sentimental-badge img{
-    width:40px;
-    height:40px;
+.headlines .sentiments {
     display:flex;
     align-items: center;
-    flex-direction: row;
+    flex-direction: column;
+    flex-shrink: 0;
+}
 
+.headline-title{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    gap:5px;
+}
+
+.headline-title h3{
+    margin:0;
+    flex:1;
+}
+
+.headlines .sentiments img{
+    width:40px;
+    height:40px;
+    object-fit: contain;
+    position:left;
 }
 
 .top-market{
     grid-area: top-market;
 }
+.top-sources{
+    grid-area: top-sources;
+    padding: 13px;
+}
+.sourceCard{
+    display:flex;
+    align-items: center;
+    gap:10x;
+}
+#no-of-articles{
+    text-align: right;
+}
+.source-info{
+    font-size: 10px;
+}
+.source-bar{
+    flex:1;
+    height:10px;
+    overflow: hidden;
+    border-radius: 20px;
+    background-color: rgba(29, 142, 218, 0.29);
+}
+.source-bar-fill{
+    height: 100%;
+    background-color: rgb(29, 142, 218);
+}
+.source-share {
+    text-align: right;
+}
 .ai-summary{
     grid-area:ai-summary;
 }
-.sentimental-analysis{
-    grid-area:sentimental-analysis;
+.Trending-analysis{
+    grid-area:Trending-analysis;
+    padding:13px;
 }
 .market-chart-1{
     grid-area:market-chart-1;
