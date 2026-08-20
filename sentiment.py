@@ -1,75 +1,166 @@
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
+from config import (
+    SENTIMENT_POSITIVE_THRESHOLD,
+    SENTIMENT_NEGATIVE_THRESHOLD
+)
+
+
+# ============================================================
+# VADER ANALYZER
+# ============================================================
+
 analyzer = SentimentIntensityAnalyzer()
 
+
+# ============================================================
+# SENTIMENT LABEL
+# ============================================================
+
+def _get_label(compound):
+    """
+    Convert a VADER compound score into a sentiment label.
+    """
+
+    if compound >= SENTIMENT_POSITIVE_THRESHOLD:
+
+        return "positive"
+
+    elif compound <= SENTIMENT_NEGATIVE_THRESHOLD:
+
+        return "negative"
+
+    return "neutral"
+
+
+# ============================================================
+# SINGLE TEXT SENTIMENT
+# ============================================================
+
 def get_sentiment(text):
+    """
+    Analyse sentiment of one piece of text.
+    """
+
     if not text or not text.strip():
-        return {"label": "neutral", "score": 0.0}
+
+        return {
+            "label": "neutral",
+            "score": 0.0
+        }
 
     scores = analyzer.polarity_scores(text)
-    compound = scores["compound"]
 
-    if compound >= 0.05:
-        label = "positive"
-    elif compound <= -0.05:
-        label = "negative"
-    else:
-        label = "neutral"
+    compound = round(
+        scores["compound"],
+        3
+    )
 
     return {
-        "label": label,
-        "score": round(compound, 3),
+        "label": _get_label(compound),
+        "score": compound,
         "detail": scores
     }
 
+
+# ============================================================
+# OVERALL ARTICLE SENTIMENT
+# ============================================================
+
 def analyze_articles(articles):
+    """
+    Calculate average sentiment across all articles.
+    """
+
     if not articles:
-        return {"label": "neutral", "score": 0.0}
 
-    total_score = 0
+        return {
+            "label": "neutral",
+            "score": 0.0
+        }
+
+    scores = []
+
     for article in articles:
-        title = article.get("title", "") or ""
-        description = article.get("description", "") or ""
-        text = f"{title}. {description}"
+
+        text = (
+            f"{article.get('title', '')}. "
+            f"{article.get('description', '')}"
+        ).strip()
+
         result = get_sentiment(text)
-        total_score += result["score"]
 
-    average_score = round(total_score / len(articles), 3)
+        scores.append(result["score"])
 
-    if average_score >= 0.05:
-        label = "positive"
-    elif average_score <= -0.05:
-        label = "negative"
-    else:
-        label = "neutral"
+    average = round(
+        sum(scores) / len(scores),
+        3
+    )
 
     return {
-        "label": label,
-        "score": average_score
+        "label": _get_label(average),
+        "score": average
     }
 
-# NEW function — scores each article individually
+
+# ============================================================
+# INDIVIDUAL ARTICLE SENTIMENT
+# ============================================================
+
 def analyze_articles_individually(articles):
+    """
+    Calculate sentiment for each individual article.
+    """
+
     if not articles:
+
         return []
 
     scored = []
+
     for article in articles:
-        title = article.get("title", "") or ""
-        description = article.get("description", "") or ""
-        text = f"{title}. {description}"
+
+        text = (
+            f"{article.get('title', '')}. "
+            f"{article.get('description', '')}"
+        ).strip()
+
         result = get_sentiment(text)
 
         scored.append({
-            "title":       title,
-            "description": article.get("description", ""),
-            "url":         article.get("url", ""),
-            "source":      article.get("source", ""),
-            "publishedAt": article.get("publishedAt", ""),
-            "sentiment":   result["label"],
-            "score":       result["score"]
+
+            "title": article.get(
+                "title",
+                ""
+            ),
+
+            "description": article.get(
+                "description",
+                ""
+            ),
+
+            "url": article.get(
+                "url",
+                ""
+            ),
+
+            "source": article.get(
+                "source",
+                ""
+            ),
+
+            "publishedAt": article.get(
+                "publishedAt",
+                ""
+            ),
+
+            "sentiment": result["label"],
+
+            "score": result["score"]
         })
 
-    # sort by score — most positive first
-    scored.sort(key=lambda x: x["score"], reverse=True)
-    return scored
+    return sorted(
+        scored,
+        key=lambda x: x["score"],
+        reverse=True
+    )
