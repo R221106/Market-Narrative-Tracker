@@ -1,3 +1,22 @@
+:root {
+    --sidebar-width: 220px;
+    --sidebar-collapsed-width: 70px;
+
+    --main-offset: 232px;
+    --collapsed-offset: 82px;
+
+    --glass-background: rgba(240, 255, 255, 0.354);
+    --sidebar-background: rgba(240, 255, 255, 0.258);
+
+    --border-radius: 30px;
+
+    --transition-speed: 0.3s;
+
+    --glass-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+
+    --heading-color: aliceblue;
+    --text-color: rgb(215, 220, 225);
+}
 * {
     margin: 0;
     padding: 0;
@@ -14,26 +33,26 @@ body {
 .main {
     position: relative;
     height: 100vh;
-    margin-left:232px;
-    width:calc(100% - 232px);
-    transition: margin-left 0.3s ease,width 0.3s ease;
+    margin-left: var(--main-offset);
+    width: calc(100% - var(--main-offset));
+    transition: margin-left var(--transition-speed) ease, width var(--transition-speed) ease;
 }
 
 .sidebar.collapsed ~.main{
-    margin-left:82px;
-    width:calc(100%-82px);
+    margin-left:var(--collapsed-offset);
+    width: calc(100% - var(--collapsed-offset));
 }
 
 .dashboard-main{
     position: relative;
-    margin-left:232px;
-    width:calc(100% - 232px);
-    transition: margin-left 0.3s ease,width 0.3s ease;
+    margin-left: var(--main-offset);
+    width:  calc(100% - var(--main-offset));
+    transition: margin-left var(--transition-speed) ease, width var(--transition-speed) ease;
 }
 
 .sidebar.collapsed ~.dashboard-main{
-    margin-left:82px;
-    width:calc(100%-82px);
+    margin-left:  var(--collapsed-offset);
+    width:calc(100% - var(--collapsed-offset));
 }
 
 /* Navigation Side Bar */
@@ -42,17 +61,17 @@ body {
     position: fixed;
     top: 0;
     left: 12px;
-    width: 220px;
+    width:  var(--sidebar-width);
     height: 100vh;
-    background: rgba(240, 255, 255, 0.258);
+    background: var(--sidebar-background);
     backdrop-filter: blur(20px) saturate(200%);
-    border-radius:30px ;
+    border-radius:var(--border-radius);
     z-index: 100;
-    transition: width 0.3s ease;
+    transition: width var(--transition-speed) ease;
 }
 
 .sidebar.collapsed{
-    width:70px;
+    width: var(--sidebar-collapsed-width);
 }
 
 .sidebar.collapsed .nav-text{
@@ -61,6 +80,13 @@ body {
 
 .sidebar.collapsed .nav-link a{
     justify-content: center;
+}
+
+.sidebar.collapsed li a:hover {
+    background:  rgba(53, 42, 203, 0.087);
+    width:50px;
+    height:50px;
+    transform: translateX(-3px)
 }
 
 .sidebar header{
@@ -107,13 +133,14 @@ body {
     align-items: center;
     gap:20px;
     text-decoration: none;
-    transition: 0.3s ease;
+    transition: background-color 0.3s ease,tranform 0.2s ease, width 0.3s ease, height 0.3s ease;
     padding: 0 10px;
 }
 
 .sidebar li a:hover {
     background:  rgba(53, 42, 203, 0.087);
-    border-radius: 30px;
+    border-radius: var(--border-radius);
+    transform: translateX(4px);
 }
 
 .sidebar li .icons{
@@ -213,7 +240,7 @@ body {
     border-radius: 60px;
     padding-right:20px;
     backdrop-filter: blur(4px) saturate(200%);
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--glass-shadow);
 }
 .search-input input{
     background: transparent;
@@ -225,11 +252,9 @@ body {
     color: rgb(240, 238, 238);
 }
 
-.search-input input:focus-within{
-    width:100%;
-    height: 10%;
-    border-radius: 60px;
-    box-shadow: 0 0 20px rgb(247, 234, 234);
+.search-input:focus-within{
+    box-shadow: 0 0 20px rgba(241, 239, 243, 0.888);
+    transition: box-shadow 0.3s ease;
 }
 
 ::placeholder{
@@ -247,6 +272,16 @@ body {
     height:35px;
     backdrop-filter: blur(2px) saturate(200%);
     cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.search-input button:focus-visible{
+    outline: 2px solid aliceblue;
+    outline-offset: 3px;
+}
+
+.search-input button:hover{
+    transform:scale(1.1);
 }
 
 .infinite-tracker{
@@ -308,9 +343,9 @@ body {
     grid-template-columns: repeat(10,1fr);
     gap: 1rem;
     padding:20px;
-    margin-left:232px;
-    width:calc(100%-232px);
-    transition:margin-left 0.3s ease,width 0.3s ease;
+    margin-left:var(--main-offset);
+    width:calc(100% - var(--main-offset));
+    transition: margin-left var(--transition-speed) ease, width var(--transition-speed) ease;
     grid-template-areas: 
     "headlines headlines headlines headlines headlines headlines top-market top-market top-market top-market "
     "headlines headlines headlines headlines headlines headlines top-market top-market top-market top-market "
@@ -325,21 +360,26 @@ body {
 }
 
 .dashboard > *{
-    background: rgba(240, 255, 255, 0.354);
+    background: var(--glass-background);
     backdrop-filter: blur(2px) saturate(200%);
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-    border-radius:30px;
+    box-shadow:var(--glass-shadow);
+    border-radius:var(--border-radius);
     min-width: 0;
 }
 
 .sidebar.collapsed ~ .dashboard{
-    margin-left:82px;
-    width:calc(100%-82px);
+    margin-left:var(--collapsed-offset);
+    width: calc(100% - var(--collapsed-offset));
 }
 
 .headlines{
     grid-area: headlines;
     padding:13px;
+}
+
+.headlines h2, .ai-summary h2, .Trending-analysis h2, .top-market h2, .top-sources h2{
+    color: var(--heading-color);
+    font-size: 30px;
 }
 
 .headlines .sentiments {
@@ -354,6 +394,24 @@ body {
     align-items: center;
     justify-content: space-between;
     gap:5px;
+    color: rgb(215, 220, 225);
+}
+
+.headline-title a{
+    color: rgb(235, 239, 242);
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.headline-title a:visited{
+    color: rgba(29, 142, 218, 0.29);
+}
+.headline-title a:hover{
+    color: rgb(29, 142, 218);
+    transform:translateX(4px);
+}
+.headline-title a h3{
+    margin:0;
 }
 
 .headline-title h3{
@@ -370,6 +428,7 @@ body {
 
 .top-market{
     grid-area: top-market;
+    padding:13px;
 }
 .top-sources{
     grid-area: top-sources;
@@ -378,7 +437,7 @@ body {
 .sourceCard{
     display:flex;
     align-items: center;
-    gap:10x;
+    gap:10px;
 }
 #no-of-articles{
     text-align: right;
@@ -402,6 +461,7 @@ body {
 }
 .ai-summary{
     grid-area:ai-summary;
+    padding:13px;
 }
 .Trending-analysis{
     grid-area:Trending-analysis;
@@ -409,9 +469,11 @@ body {
 }
 .market-chart-1{
     grid-area:market-chart-1;
+    padding:13px;
 }
 .market-chart-2{
     grid-area:market-chart-2;
+    padding:13px;
 }
 
 

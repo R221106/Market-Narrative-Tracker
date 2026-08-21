@@ -6,7 +6,7 @@
 
 html,
 body {
-    width: 100%;
+    width: 90%;
     height: 100%;
     font-family: "Bricolage Grotesque", sans-serif;;
 }
@@ -170,7 +170,7 @@ body {
 
 
 .search-input{
-    width:50%;
+    width:58%;
     height: 60px;
     display:flex;
     background-color: rgba(240, 255, 255, 0.119);
@@ -191,11 +191,8 @@ body {
     color: rgb(240, 238, 238);
 }
 
-.search-input input:focus-within{
-    width:100%;
-    height: 10%;
-    border-radius: 60px;
-    box-shadow: 0 0 20px rgb(247, 234, 234);
+.search-input:focus-within{
+    box-shadow: 0 0 20px rgba(241, 239, 243, 0.888);
 }
 
 ::placeholder{
@@ -205,6 +202,23 @@ body {
 .search-input button img{
     width: 25px;
 }
+
+.newsCard a{
+    color: rgb(235, 239, 242);
+    text-decoration: none;
+    display: inline-block;
+}
+.newsCard a:visited{
+    color: rgba(29, 142, 218, 0.29);
+}
+.newsCard a:hover{
+    color: rgb(143, 206, 238);
+    transform:translateX(4px);
+}
+.newsCard a h3{
+    margin:0;
+}
+
 
 .search-input button{
     border:0;
@@ -216,7 +230,7 @@ body {
 }
 .search-layout{
     display:grid;
-    grid-template-columns: 7fr 3fr;
+    grid-template-columns: 800px 300px;
     gap:20px;
     width: 100%;
     padding: 20px;

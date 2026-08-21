@@ -8,19 +8,22 @@ searchButton.addEventListener("click",function(){
 
 const sidebar=document.querySelector(".sidebar");
 const toggleMenu = document.querySelector(".toggle-menu");
+if(sidebar && toggleMenu){
+    const sidebarState=localStorage.getItem("sidebarState");
+    if(sidebarState === "collapsed") sidebar.classList.add("collapsed");
+}
 toggleMenu.addEventListener("click", function () {
-
     sidebar.classList.toggle("collapsed");
-
+    if(sidebar.classList.contains("collapsed")) localStorage.setItem("sidebarState","collapsed");
+    else localStorage.setItem("sidebar","open");
 });
 
 async function getkeywords() {
     try{
-        const response=await fetch( `http://127.0.0.1:5000/api/keywords`); // fetching the data
+        const response=await fetch( `http://127.0.0.1:5000/api/dashboard`); // fetching the data
         if(!response.ok) throw new Error("Failed to fetch the error!")
         const data = await response.json();
-        //displayKeywords(data.keywords);
-        
+        displayKeywords(data.topics);
     }
     catch(error){
         console.error("Error fetching keywords:", error);
@@ -35,12 +38,9 @@ function displayKeywords(keyword){
     allKeyword.forEach(keyword=>{
         const card=document.createElement("div");
         card.classList.add("card");
-        card.innerHTML=`
-        <h2>${keyword.word}</h2>
-        <p>Articles ${keyword.count} found.</p>
-        `
+        card.innerHTML=`<h2>${keyword}</h2>`
         card.addEventListener("click",function(){
-            window.location.href=`search.html?topic=${encodeURIComponent(keyword.word)}`;
+            window.location.href=`search.html?topic=${encodeURIComponent(keyword)}`;
         });
         track.appendChild(card);
     });
