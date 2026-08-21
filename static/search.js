@@ -28,7 +28,9 @@ function fetchNews(article){
         const newsCard=document.createElement("div");
         newsCard.classList.add("newsCard"); //<div class="newsCard"></div>
         newsCard.innerHTML=`
-                <h3>${element.title}</h3>
+                <a href="${element.url}" target="_blank">
+                    <h3>${element.title}</h3>
+                </a>
                 <p>${element.description || "No desciption Available."}</p> <br>
         `;
         searchResult.append(newsCard)
@@ -39,24 +41,36 @@ function fetchNews(article){
 const urlparams=new URLSearchParams(window.location.search);
 const topic =urlparams.get("topic");
 const searchTopic=document.getElementById("search-topic");
+const searchInput = document.getElementById("search-input");
+document.title=`Search for ${topic}`;
 if(topic){
-    searchTopic.textContent=`You searched for ${topic} `;
+    searchTopic.textContent=`You searched for ${topic}`;
+    searchInput.placeholder=`Searched for ${topic}`;
     getData(topic);
 }else{
     searchTopic.textContent=`No search Topic provided`;
 }
-const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
-searchButton.addEventListener("click",function(){
-    const topic = searchInput.value.trim();
+function performSearch(){
+    const topic = searchInput.value.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g," ");
     if(!topic) return;
     window.location.href=`search.html?topic=${encodeURIComponent(topic)}`;
+}
+searchButton.addEventListener("click",performSearch);
+searchInput.addEventListener("keydown",function(event){
+    if(event.key==="Enter") performSearch();
 });
 
 const sidebar=document.querySelector(".sidebar");
 const toggleMenu = document.querySelector(".toggle-menu");
+if(sidebar && toggleMenu){
+    const sidebarState=localStorage.getItem("sidebarState");
+    if(sidebarState === "collapsed") sidebar.classList.add("collapsed");
+}
 toggleMenu.addEventListener("click", function () {
 
     sidebar.classList.toggle("collapsed");
+    if(sidebar.classList.contains("collapsed")) localStorage.setItem("sidebarState","collapsed");
+    else localStorage.setItem("sidebar","open");
 
 });
