@@ -25,6 +25,7 @@ from config import (
     WATCHLIST_TOPICS
 )
 
+from summariser import generate_summary
 
 # ============================================================
 # FLASK APP
@@ -306,6 +307,31 @@ def dashboard():
         "counts": counts
     })
 
+@app.route("/api/summary")
+def summary():
+    topic = get_topic()
+    if not topic:
+        return topic_error()
+
+    # gather everything needed for a good summary
+    articles = fetch_news(topic)
+    sentiment = analyze_articles(articles)
+    keywords = extract_keywords(articles, top_n=5)
+
+    # generate the summary
+    narrative = generate_summary(
+        topic=topic,
+        articles=articles,
+        sentiment_label=sentiment["label"],
+        top_keywords=keywords
+    )
+
+    return jsonify({
+        "topic":     topic,
+        "summary":   narrative,
+        "sentiment": sentiment["label"],
+        "keywords":  [kw["word"] for kw in keywords]
+    })
 
 # ============================================================
 # RUN SERVER
