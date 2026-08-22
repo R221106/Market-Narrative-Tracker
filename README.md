@@ -43,10 +43,4 @@ Instead of focusing only on stock prices, Sentipulse focuses on the **stories an
   **REST API**
   - Backend functionality is exposed through Flask API endpoints.
 
-# Quick Start
 
-## 1. Clone the repository
-
-```bash
-git clone <YOUR-GITHUB-REPOSITORY-URL>
-cd Sentipulse
