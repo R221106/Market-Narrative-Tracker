@@ -39,8 +39,44 @@ Instead of focusing only on stock prices, Sentipulse focuses on the **stories an
 
    **SQLite Database**
   - Store and retrieve relevant application data.
-
-  **REST API**
+    **REST API**
   - Backend functionality is exposed through Flask API endpoints.
+    
+## Technologies Used
+**Backend:**
+- Python
+- Flask
+- Flask-CORS
+  
+**Natural Language Processing:**
+- NLTK
+- VADER Sentiment Analysis
+  
+**Data:**
+- NewsAPI
+- SQLite
+  
+**Frontend:**
+- HTML
+- CSS
+- JavaScript
+- Fetch API
+- Chart.js
+  
+**Development:**
+- Git
+- GitHub
+- pytest
+- Python virtual environments
+
+## Prerequisites
+
+**Before running Sentipulse, make sure you have:**
+- Python 3.x
+- pip
+- Git
+- A NewsAPI API key
+- A modern web browser
+  
 
 
