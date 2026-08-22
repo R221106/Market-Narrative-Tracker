@@ -6,7 +6,7 @@ Sentipulse is a market narrative tracking dashboard that analyses financial news
 
 Instead of focusing only on stock prices, Sentipulse focuses on the **stories and narratives driving market attention**.
 
-## 🚀 Status
+## Status
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue)
 ![Flask](https://img.shields.io/badge/Backend-Flask-black)
