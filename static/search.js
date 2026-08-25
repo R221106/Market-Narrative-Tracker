@@ -1,3 +1,4 @@
+console.log("SEARCH.JS LOADED");
 async function getData(topic) {
     try{
         const response=await fetch( `http://127.0.0.1:5000/api/news?topic=${encodeURIComponent(topic)}`); // fetching the data
@@ -37,6 +38,27 @@ function fetchNews(article){
     });
 }
 
+async function loadSummary(topic){
+    const loading = document.getElementById("summary-loading");
+    const summaryContent = document.getElementById("summary-content");
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/api/summary?topic=${encodeURIComponent(topic)}`);
+        if (!response.ok) throw new Error("Failed to load AI Summary");
+        const data = await response.json();
+        console.log(data.summary);
+        summaryContent.innerHTML=`
+            <h3>${data.topic}</h3><br>
+            <p>${data.sentiment}</p><br>
+            <p>${data.summary}</p>
+        `;
+        loading.style.display = "none";
+    } catch (error) {
+        console.error("AI Summary error:", error);
+        loading.style.display = "none";
+        summaryContent.innerHTML=`<p>Unable to Generate a Summary</p>`;
+    }
+}
+
 // To get the topic from the URL 
 const urlparams=new URLSearchParams(window.location.search);
 const topic =urlparams.get("topic");
@@ -47,6 +69,7 @@ if(topic){
     searchTopic.textContent=`You searched for ${topic}`;
     searchInput.placeholder=`Searched for ${topic}`;
     getData(topic);
+    loadSummary(topic);
 }else{
     searchTopic.textContent=`No search Topic provided`;
 }
@@ -61,16 +84,19 @@ searchInput.addEventListener("keydown",function(event){
     if(event.key==="Enter") performSearch();
 });
 
+// Side bar Closing and Opening 
 const sidebar=document.querySelector(".sidebar");
 const toggleMenu = document.querySelector(".toggle-menu");
 if(sidebar && toggleMenu){
     const sidebarState=localStorage.getItem("sidebarState");
     if(sidebarState === "collapsed") sidebar.classList.add("collapsed");
+    toggleMenu.addEventListener("click", function () {
+        sidebar.classList.toggle("collapsed");
+        if(sidebar.classList.contains("collapsed")) {
+            localStorage.setItem("sidebarState","collapsed");
+        }
+        else {
+            localStorage.setItem("sidebarState","open");
+        }
+    });
 }
-toggleMenu.addEventListener("click", function () {
-
-    sidebar.classList.toggle("collapsed");
-    if(sidebar.classList.contains("collapsed")) localStorage.setItem("sidebarState","collapsed");
-    else localStorage.setItem("sidebar","open");
-
-});

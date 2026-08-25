@@ -6,20 +6,20 @@
 
 html,
 body {
-    width: 90%;
+    width: 100%;
     height: 100%;
-    font-family: "Bricolage Grotesque", sans-serif;;
+    font-family:sans-serif;
 }
 
 .main {
     position: relative;
     margin-left:232px;
-    width:calc(100%-232px);
+    width:calc(100% - 232px);
     transition: margin-left 0.3s ease,width 0.3s ease;
 }
 .sidebar.collapsed ~.main{
     margin-left:82px;
-    width:calc(100%-82px);
+    width:calc(100% - 82px);
 }
 
 /* Navigation Side Bar */
@@ -97,7 +97,6 @@ body {
 }
 
 .sidebar li a:hover {
-    background:  rgba(52, 42, 203, 0.2);
     border-radius: 30px;
 }
 
@@ -105,6 +104,10 @@ body {
     width: 30px;
     height: 30px;
     object-fit: contain;
+}
+
+.sidebar.collapsed li a:hover {
+    transform: scale(1.1);
 }
 
 .sidebar .nav-menu .img{
@@ -209,16 +212,14 @@ body {
     display: inline-block;
 }
 .newsCard a:visited{
-    color: rgba(29, 142, 218, 0.29);
+    color: rgb(210, 195, 235);
 }
 .newsCard a:hover{
-    color: rgb(143, 206, 238);
     transform:translateX(4px);
 }
 .newsCard a h3{
     margin:0;
 }
-
 
 .search-input button{
     border:0;
@@ -235,13 +236,13 @@ body {
     width: 100%;
     padding: 20px;
     margin-left:232px;
-    width:calc(100%-232px);
+    width:calc(100% - 232px);
     height:100vh;
 }
 
 .sidebar.collapsed ~ .search-layout{
     margin-left:82px;
-    width:calc(100%-82px);
+    width:calc(100% - 82px);
 }
 
 .search-results {
@@ -256,13 +257,1004 @@ body {
     height:fit-content;
     min-height:500px;
     border-radius: 20px;
-    display:flex;
-    align-items: center ;
-    flex-direction:column;
+    
     position: sticky;
     top:20px;
     padding: 20px;
 }
 .ai-summary h2{
-    color: rgb(4, 20, 37);
+    color:  white;
+}
+.summary-loading{
+    padding:10px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap:30px;
+}
+.summary-loading p {
+    margin-top: 30px;
+}
+.loader {
+    position: relative;
+    width: 75px;
+    height: 100px;
+}
+.loader__bar {
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    height: 50%;
+    background: var(--bar-color, #333);
+    transform-origin: center bottom;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Bar positions */
+.loader__bar:nth-child(1) {
+    left: 0;
+    transform: scale(1, 0.2);
+    animation: barUp1 4s infinite;
+}
+
+.loader__bar:nth-child(2) {
+    left: 15px;
+    transform: scale(1, 0.4);
+    animation: barUp2 4s infinite;
+}
+
+.loader__bar:nth-child(3) {
+    left: 30px;
+    transform: scale(1, 0.6);
+    animation: barUp3 4s infinite;
+}
+
+.loader__bar:nth-child(4) {
+    left: 45px;
+    transform: scale(1, 0.8);
+    animation: barUp4 4s infinite;
+}
+
+.loader__bar:nth-child(5) {
+    left: 60px;
+    transform: scale(1, 1);
+    animation: barUp5 4s infinite;
+}
+
+.loader__ball {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--ball-color, #333);
+    border-radius: 50%;
+    animation: ball 4s infinite;
+}
+
+
+/* =========================
+   BALL ANIMATION
+   ========================= */
+
+@keyframes ball {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    5% {
+        transform: translate(8px, -14px);
+    }
+
+    10% {
+        transform: translate(15px, -10px);
+    }
+
+    17% {
+        transform: translate(23px, -24px);
+    }
+
+    20% {
+        transform: translate(30px, -20px);
+    }
+
+    27% {
+        transform: translate(38px, -34px);
+    }
+
+    30% {
+        transform: translate(45px, -30px);
+    }
+
+    37% {
+        transform: translate(53px, -44px);
+    }
+
+    40% {
+        transform: translate(60px, -40px);
+    }
+
+    50% {
+        transform: translate(60px, 0);
+    }
+
+    57% {
+        transform: translate(53px, -14px);
+    }
+
+    60% {
+        transform: translate(45px, -10px);
+    }
+
+    67% {
+        transform: translate(37px, -24px);
+    }
+
+    70% {
+        transform: translate(30px, -20px);
+    }
+
+    77% {
+        transform: translate(22px, -34px);
+    }
+
+    80% {
+        transform: translate(15px, -30px);
+    }
+
+    87% {
+        transform: translate(7px, -44px);
+    }
+
+    90% {
+        transform: translate(0, -40px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+
+/* =========================
+   BAR ANIMATIONS
+   ========================= */
+
+@keyframes barUp1 {
+    0% {
+        transform: scale(1, 0.2);
+    }
+
+    40% {
+        transform: scale(1, 0.2);
+    }
+
+    50% {
+        transform: scale(1, 1);
+    }
+
+    90% {
+        transform: scale(1, 1);
+    }
+
+    100% {
+        transform: scale(1, 0.2);
+    }
+}
+
+@keyframes barUp2 {
+    0% {
+        transform: scale(1, 0.4);
+    }
+
+    40% {
+        transform: scale(1, 0.4);
+    }
+
+    50% {
+        transform: scale(1, 0.8);
+    }
+
+    90% {
+        transform: scale(1, 0.8);
+    }
+
+    100% {
+        transform: scale(1, 0.4);
+    }
+}
+
+@keyframes barUp3 {
+    0% {
+        transform: scale(1, 0.6);
+    }
+
+    100% {
+        transform: scale(1, 0.6);
+    }
+}
+
+@keyframes barUp4 {
+    0% {
+        transform: scale(1, 0.8);
+    }
+
+    40% {
+        transform: scale(1, 0.8);
+    }
+
+    50% {
+        transform: scale(1, 0.4);
+    }
+
+    90% {
+        transform: scale(1, 0.4);
+    }
+
+    100% {
+        transform: scale(1, 0.8);
+    }
+}
+
+@keyframes barUp5 {
+    0% {
+        transform: scale(1, 1);
+    }
+
+    40% {
+        transform: scale(1, 1);
+    }
+
+    50% {
+        transform: scale(1, 0.2);
+    }
+
+    90% {
+        transform: scale(1, 0.2);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}
+
+/* =========================================================
+   SEARCH PAGE RESPONSIVE DESIGN
+   ========================================================= */
+
+
+/* =========================================================
+   TABLET
+   768px and below
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        width: 65px;
+    }
+
+    .sidebar:not(.collapsed) {
+        width: 180px;
+    }
+
+    .main {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+    }
+
+    .sidebar:not(.collapsed) ~ .main {
+        margin-left: 192px;
+        width: calc(100% - 192px);
+    }
+
+    .sidebar.collapsed ~ .main {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+    }
+
+
+    /* HERO */
+
+    .content {
+        padding: 20px;
+        gap: 15px;
+    }
+
+    .content h1 {
+        font-size: 3rem;
+    }
+
+    .search-input {
+        width: 70%;
+    }
+
+
+    /* SEARCH RESULTS + AI SUMMARY */
+
+    .search-layout {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+
+        height: auto;
+        min-height: auto;
+    }
+
+    .sidebar:not(.collapsed) ~ .search-layout {
+        margin-left: 192px;
+        width: calc(100% - 192px);
+    }
+
+    .sidebar.collapsed ~ .search-layout {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+    }
+
+    .ai-summary {
+        position: relative;
+        top: auto;
+        min-height: 300px;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   600px and below
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* =====================================================
+       SIDEBAR → TOP NAVIGATION BAR
+       ===================================================== */
+
+    .sidebar {
+        position: fixed;
+
+        top: 8px;
+        left: 5px;
+
+        width: calc(100% - 10px) !important;
+        height: 52px !important;
+
+        border-radius: 15px;
+
+        overflow: hidden;
+
+        z-index: 1000;
+
+        transition: height 0.3s ease;
+    }
+
+
+    /* =====================================================
+       SIDEBAR HEADER
+       ===================================================== */
+
+    .sidebar header {
+        width: 100%;
+        height: auto;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    /* =====================================================
+       MENU BUTTON
+       ===================================================== */
+
+    .nav-menu {
+        width: 100%;
+        height: 52px;
+
+        padding-left: 15px;
+
+        display: flex;
+        align-items: center;
+    }
+
+    .toggle-menu {
+        width: 28px;
+        height: 28px;
+    }
+
+
+    /* =====================================================
+       MENU CLOSED
+       ===================================================== */
+
+    .sidebar.collapsed {
+        width: calc(100% - 10px) !important;
+        height: 52px !important;
+    }
+
+    .sidebar.collapsed .menu-bar {
+        display: none;
+    }
+
+
+    /* =====================================================
+       MENU OPEN
+       ===================================================== */
+
+    .sidebar:not(.collapsed) {
+        width: calc(100% - 10px) !important;
+
+        height: 115px !important;
+    }
+
+    .sidebar:not(.collapsed) .menu-bar {
+        display: block;
+
+        width: 100%;
+
+        margin-top: 0;
+    }
+
+
+    /* =====================================================
+       MENU LINKS
+       ===================================================== */
+
+    .sidebar:not(.collapsed) .menu-links {
+
+        width: 100%;
+
+        display: flex;
+        flex-direction: row;
+
+        justify-content: space-evenly;
+        align-items: center;
+
+        padding: 0;
+        margin: 0;
+    }
+
+
+    .sidebar:not(.collapsed) li {
+
+        height: 55px;
+
+        margin: 0;
+
+        flex: 1;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+
+    .sidebar:not(.collapsed) li a {
+
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+        align-items: center;
+
+        gap: 3px;
+    }
+
+
+    .sidebar:not(.collapsed) li .icons {
+
+        width: 22px;
+        height: 22px;
+    }
+
+
+    .sidebar:not(.collapsed) .nav-text {
+
+        display: block;
+
+        font-size: 11px;
+
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .main {
+
+        margin-left: 0 !important;
+
+        width: 100% !important;
+
+        height: auto;
+
+        min-height: auto;
+
+        padding-top: 70px;
+        padding-bottom: 20px;
+    }
+
+
+    /*
+       When menu opens, give the hero a little more
+       space because the navigation is now taller.
+    */
+
+    .sidebar:not(.collapsed) ~ .main {
+
+        margin-left: 0 !important;
+
+        width: 100% !important;
+
+        padding-top: 125px;
+    }
+
+
+    /* =====================================================
+       HERO CONTENT
+       ===================================================== */
+
+    .content {
+
+        width: 100%;
+
+        height: auto;
+
+        padding: 10px 15px 0;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 0;
+
+        text-align: center;
+    }
+
+
+    /* =====================================================
+       SENTIPULSE
+       ===================================================== */
+
+    .content h1 {
+
+        font-size: 2.2rem;
+
+        letter-spacing: 0.05rem;
+
+        margin-top: 10px;
+
+        margin-bottom: 18px;
+    }
+
+
+    /* =====================================================
+       SEARCH BAR
+       ===================================================== */
+
+    .search-input {
+
+        width: 100%;
+
+        max-width: 430px;
+
+        height: 50px;
+
+        margin: 0 auto;
+
+        padding-right: 10px;
+    }
+
+
+    .search-input input {
+
+        width: 100%;
+
+        min-width: 0;
+
+        height: 100%;
+
+        font-size: 14px;
+
+        padding: 10px 12px;
+    }
+
+
+    .search-input button {
+
+        width: 45px;
+
+        height: 45px;
+
+        flex-shrink: 0;
+    }
+
+
+    .search-input button img {
+
+        width: 21px;
+        height: 21px;
+    }
+
+
+    /* =====================================================
+       SEARCH RESULTS + AI SUMMARY
+       ===================================================== */
+
+    .search-layout {
+
+        margin-left: 0 !important;
+
+        width: 100% !important;
+
+        height: auto;
+
+        min-height: auto;
+
+        padding: 10px 15px 30px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+
+    /* =====================================================
+       SEARCH RESULTS
+       ===================================================== */
+
+    #search-result {
+
+        width: 100%;
+
+        min-width: 0;
+
+        padding: 15px;
+
+        border-radius: 15px;
+
+        overflow-wrap: break-word;
+    }
+
+
+    #search-results {
+
+        width: 100%;
+    }
+
+
+    .newsCard {
+
+        width: 100%;
+
+        padding: 12px 0;
+
+        overflow-wrap: break-word;
+    }
+
+
+    .newsCard h3 {
+
+        font-size: 1rem;
+
+        line-height: 1.4;
+    }
+
+
+    .newsCard p {
+
+        font-size: 0.85rem;
+
+        line-height: 1.5;
+    }
+
+
+    /* =====================================================
+       AI SUMMARY
+       ===================================================== */
+
+    .ai-summary {
+
+        width: 100%;
+
+        min-height: 280px;
+
+        position: relative;
+
+        top: auto;
+
+        padding: 15px;
+
+        border-radius: 15px;
+    }
+
+
+    .ai-summary h2 {
+
+        font-size: 1.1rem;
+    }
+
+
+    /* =====================================================
+       LOADING ANIMATION
+       ===================================================== */
+
+    .summary-loading {
+
+        flex-direction: column;
+
+        justify-content: center;
+
+        align-items: center;
+
+        gap: 10px;
+
+        text-align: center;
+    }
+
+    .summary-loading p {
+
+        margin-top: 10px;
+    }
+}
+
+
+/* =========================================================
+   SMALL PHONE
+   480px and below
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .sidebar {
+        top: 6px;
+        left: 5px;
+    }
+
+
+    /* HERO */
+
+    .main {
+
+        padding-top: 65px;
+
+        padding-bottom: 15px;
+    }
+
+
+    .sidebar:not(.collapsed) ~ .main {
+
+        padding-top: 120px;
+    }
+
+
+    .content {
+
+        padding: 8px 12px 0;
+    }
+
+
+    /* SENTIPULSE */
+
+    .content h1 {
+
+        font-size: 2rem;
+
+        margin-top: 8px;
+
+        margin-bottom: 16px;
+    }
+
+
+    /* SEARCH BAR */
+
+    .search-input {
+
+        width: 100%;
+
+        height: 48px;
+    }
+
+
+    .search-input input {
+
+        font-size: 13px;
+
+        padding: 9px 10px;
+    }
+
+
+    .search-input button {
+
+        width: 43px;
+
+        height: 43px;
+    }
+
+
+    .search-input button img {
+
+        width: 20px;
+
+        height: 20px;
+    }
+
+
+    /* RESULTS */
+
+    .search-layout {
+
+        padding: 8px 10px 25px;
+
+        gap: 12px;
+    }
+
+
+    #search-result {
+
+        padding: 13px;
+    }
+
+
+    .newsCard h3 {
+
+        font-size: 0.95rem;
+    }
+
+
+    .newsCard p {
+
+        font-size: 0.82rem;
+    }
+
+
+    /* SUMMARY */
+
+    .ai-summary {
+
+        min-height: 250px;
+
+        padding: 13px;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL PHONE
+   390px and below
+   ========================================================= */
+
+@media (max-width: 390px) {
+
+    /* HERO */
+
+    .main {
+
+        padding-top: 62px;
+
+        padding-bottom: 12px;
+    }
+
+
+    .sidebar:not(.collapsed) ~ .main {
+
+        padding-top: 118px;
+    }
+
+
+    .content {
+
+        padding: 6px 10px 0;
+    }
+
+
+    /* SENTIPULSE */
+
+    .content h1 {
+
+        font-size: 1.8rem;
+
+        letter-spacing: 0.03rem;
+
+        margin-bottom: 14px;
+    }
+
+
+    /* SEARCH */
+
+    .search-input {
+
+        height: 46px;
+    }
+
+
+    .search-input input {
+
+        font-size: 12px;
+
+        padding: 8px;
+    }
+
+
+    .search-input button {
+
+        width: 41px;
+
+        height: 41px;
+    }
+
+
+    .search-input button img {
+
+        width: 19px;
+
+        height: 19px;
+    }
+
+
+    /* RESULTS */
+
+    .search-layout {
+
+        padding: 6px 8px 20px;
+
+        gap: 10px;
+    }
+
+
+    #search-result {
+
+        padding: 12px;
+    }
+
+
+    .newsCard {
+
+        padding: 10px 0;
+    }
+
+
+    .newsCard h3 {
+
+        font-size: 0.9rem;
+
+        line-height: 1.35;
+    }
+
+
+    .newsCard p {
+
+        font-size: 0.78rem;
+
+        line-height: 1.45;
+    }
+
+
+    /* AI SUMMARY */
+
+    .ai-summary {
+
+        min-height: 230px;
+
+        padding: 12px;
+    }
+
+
+    .ai-summary h2 {
+
+        font-size: 0.95rem;
+    }
 }
