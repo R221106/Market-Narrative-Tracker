@@ -16,18 +16,23 @@
 
     --heading-color: aliceblue;
     --text-color: rgb(215, 220, 225);
+
+    --bar-color: #fff;
+    --ball-color: #fff;
+    --bg-color: #EA4961;
 }
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
 }
 
 html,
 body {
     width: 100%;
     height: 100%;
-    font-family: "Bricolage Grotesque", sans-serif;
+    font-family:  "Bricolage Grotesque", Arial,sans-serif;
 }
 
 .main {
@@ -36,6 +41,57 @@ body {
     margin-left: var(--main-offset);
     width: calc(100% - var(--main-offset));
     transition: margin-left var(--transition-speed) ease, width var(--transition-speed) ease;
+}
+.loading{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.loading p{
+    font-size:25px;
+    color: white;
+}
+
+.container {
+    position: absolute;
+    left:25%;
+    display: flex;
+    gap: 0.5rem;
+    transform: translate(-50%, -50%);
+}
+
+.dot {
+width: 20px;
+height:20px;
+background-color: #ffffff;
+border-radius: 50%;
+animation: float 0.7s infinite;
+}
+
+.dot2 {
+animation-delay: 0.1s;
+}
+
+.dot1 {
+animation-delay: 0.2s;
+}
+
+@keyframes float {
+0% {
+    transform: translateY(0);
+}
+
+/* 25% {
+    transform: translateY(-1.2rem);
+} */
+
+50% {
+    transform: translateY(1.2rem);
+}
+
+100% {
+    transform: translateY(0);
+}
 }
 
 .sidebar.collapsed ~.main{
@@ -83,10 +139,7 @@ body {
 }
 
 .sidebar.collapsed li a:hover {
-    background:  rgba(53, 42, 203, 0.087);
-    width:50px;
-    height:50px;
-    transform: translateX(-3px)
+    transform: scale(1.1);
 }
 
 .sidebar header{
@@ -133,12 +186,11 @@ body {
     align-items: center;
     gap:20px;
     text-decoration: none;
-    transition: background-color 0.3s ease,tranform 0.2s ease, width 0.3s ease, height 0.3s ease;
+    transition: background-color 0.3s ease,transform 0.2s ease, width 0.3s ease, height 0.3s ease;
     padding: 0 10px;
 }
 
 .sidebar li a:hover {
-    background:  rgba(53, 42, 203, 0.087);
     border-radius: var(--border-radius);
     transform: translateX(4px);
 }
@@ -218,13 +270,13 @@ body {
 }
 
 .dashboard-content h1{
-    font-size: 4rem;
+    font-size: 3.8rem;
     margin-bottom: 15px;
     letter-spacing: 0.3rem;
 }
 
 .content h1 {
-    font-size: 5rem;
+    font-size: 3.8rem;
     margin-bottom: 15px;
     letter-spacing: 0.3rem;
 }
@@ -241,6 +293,12 @@ body {
     padding-right:20px;
     backdrop-filter: blur(4px) saturate(200%);
     box-shadow: var(--glass-shadow);
+    outline: none;
+    box-shadow: none;
+}
+.search-input:focus {
+    outline: none;
+    box-shadow: none;
 }
 .search-input input{
     background: transparent;
@@ -341,8 +399,9 @@ body {
 .dashboard{
     display:grid;
     grid-template-columns: repeat(10,1fr);
-    gap: 1rem;
+    gap: 16px;
     padding:20px;
+    font-size: 0.9rem;
     margin-left:var(--main-offset);
     width:calc(100% - var(--main-offset));
     transition: margin-left var(--transition-speed) ease, width var(--transition-speed) ease;
@@ -353,14 +412,16 @@ body {
     "headlines headlines headlines headlines headlines headlines top-sources top-sources top-sources top-sources "
     "ai-summary ai-summary ai-summary ai-summary Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis"
     "ai-summary ai-summary ai-summary ai-summary Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis"
-    "ai-summary ai-summary ai-summary ai-summary Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis Trending-analysis"
-    "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-2 market-chart-2 market-chart-2"
-    "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-2 market-chart-2 market-chart-2"
-    "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-2 market-chart-2 market-chart-2"
+    "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-1 market-chart-1 market-chart-1"
+    "ai-summary ai-summary ai-summary ai-summary market-chart-1 market-chart-1 market-chart-1 market-chart-1 market-chart-1 market-chart-1"
 }
 
 .dashboard > *{
-    background: var(--glass-background);
+    background: linear-gradient(
+        135deg,
+        rgba(240, 255, 255, 0.30),
+        rgba(0, 0, 0, 0.18)
+    );
     backdrop-filter: blur(2px) saturate(200%);
     box-shadow:var(--glass-shadow);
     border-radius:var(--border-radius);
@@ -377,9 +438,15 @@ body {
     padding:13px;
 }
 
-.headlines h2, .ai-summary h2, .Trending-analysis h2, .top-market h2, .top-sources h2{
+.headlines h3{
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.headlines h2, .ai-summary h2, .Trending-analysis h2, .top-market h2, .top-sources h2, .market-chart-1 h2{
     color: var(--heading-color);
     font-size: 30px;
+    padding: 10px;
 }
 
 .headlines .sentiments {
@@ -387,6 +454,28 @@ body {
     align-items: center;
     flex-direction: column;
     flex-shrink: 0;
+    max-width: 85px;
+}
+
+.sentiment {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+}
+
+.sentiment-positive {
+    color: #72ec8f;
+}
+.sentiment-neutral {
+    color: #e5e5e5;
+}
+.sentiment-negative {   
+    color: #fc3351;
+}
+.sentiment:hover {
+    transform: scale(1.05);
 }
 
 .headline-title{
@@ -395,6 +484,11 @@ body {
     justify-content: space-between;
     gap:5px;
     color: rgb(215, 220, 225);
+    padding: 10px;
+}
+
+#news-container p{
+    padding-left:10px ;
 }
 
 .headline-title a{
@@ -404,10 +498,9 @@ body {
     transition: color 0.2s ease, transform 0.2s ease;
 }
 .headline-title a:visited{
-    color: rgba(29, 142, 218, 0.29);
+    color: rgb(210, 195, 235);
 }
 .headline-title a:hover{
-    color: rgb(29, 142, 218);
     transform:translateX(4px);
 }
 .headline-title a h3{
@@ -438,23 +531,26 @@ body {
     display:flex;
     align-items: center;
     gap:10px;
+    padding:10px;
 }
 #no-of-articles{
     text-align: right;
 }
 .source-info{
-    font-size: 10px;
+    font-size: 12px;
 }
 .source-bar{
     flex:1;
-    height:10px;
+    height:20px;
+    width: 90%;
     overflow: hidden;
-    border-radius: 20px;
-    background-color: rgba(29, 142, 218, 0.29);
+    border-radius: 10px;
+    background: rgba(141, 147, 212, 0.429);
 }
 .source-bar-fill{
     height: 100%;
-    background-color: rgb(29, 142, 218);
+    border-radius: 10px;
+    background: rgba(84, 163, 254, 0.767);
 }
 .source-share {
     text-align: right;
@@ -463,124 +559,861 @@ body {
     grid-area:ai-summary;
     padding:13px;
 }
+#summary-content{
+    padding: 13px;
+}
+#summary-content p{
+    line-height: 1.8;
+}
+.summary-loading{
+    padding:10px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    gap:30px;
+}
+.summary-loading p {
+    margin-top: 30px;
+}
+.loader {
+    position: relative;
+    width: 75px;
+    height: 100px;
+}
+.loader__bar {
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    height: 50%;
+    background: var(--bar-color, #333);
+    transform-origin: center bottom;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Bar positions */
+.loader__bar:nth-child(1) {
+    left: 0;
+    transform: scale(1, 0.2);
+    animation: barUp1 4s infinite;
+}
+
+.loader__bar:nth-child(2) {
+    left: 15px;
+    transform: scale(1, 0.4);
+    animation: barUp2 4s infinite;
+}
+
+.loader__bar:nth-child(3) {
+    left: 30px;
+    transform: scale(1, 0.6);
+    animation: barUp3 4s infinite;
+}
+
+.loader__bar:nth-child(4) {
+    left: 45px;
+    transform: scale(1, 0.8);
+    animation: barUp4 4s infinite;
+}
+
+.loader__bar:nth-child(5) {
+    left: 60px;
+    transform: scale(1, 1);
+    animation: barUp5 4s infinite;
+}
+
+.loader__ball {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--ball-color, #333);
+    border-radius: 50%;
+    animation: ball 4s infinite;
+}
+
+
+/* =========================
+   BALL ANIMATION
+   ========================= */
+
+@keyframes ball {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    5% {
+        transform: translate(8px, -14px);
+    }
+
+    10% {
+        transform: translate(15px, -10px);
+    }
+
+    17% {
+        transform: translate(23px, -24px);
+    }
+
+    20% {
+        transform: translate(30px, -20px);
+    }
+
+    27% {
+        transform: translate(38px, -34px);
+    }
+
+    30% {
+        transform: translate(45px, -30px);
+    }
+
+    37% {
+        transform: translate(53px, -44px);
+    }
+
+    40% {
+        transform: translate(60px, -40px);
+    }
+
+    50% {
+        transform: translate(60px, 0);
+    }
+
+    57% {
+        transform: translate(53px, -14px);
+    }
+
+    60% {
+        transform: translate(45px, -10px);
+    }
+
+    67% {
+        transform: translate(37px, -24px);
+    }
+
+    70% {
+        transform: translate(30px, -20px);
+    }
+
+    77% {
+        transform: translate(22px, -34px);
+    }
+
+    80% {
+        transform: translate(15px, -30px);
+    }
+
+    87% {
+        transform: translate(7px, -44px);
+    }
+
+    90% {
+        transform: translate(0, -40px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+
+/* =========================
+   BAR ANIMATIONS
+   ========================= */
+
+@keyframes barUp1 {
+    0% {
+        transform: scale(1, 0.2);
+    }
+
+    40% {
+        transform: scale(1, 0.2);
+    }
+
+    50% {
+        transform: scale(1, 1);
+    }
+
+    90% {
+        transform: scale(1, 1);
+    }
+
+    100% {
+        transform: scale(1, 0.2);
+    }
+}
+
+@keyframes barUp2 {
+    0% {
+        transform: scale(1, 0.4);
+    }
+
+    40% {
+        transform: scale(1, 0.4);
+    }
+
+    50% {
+        transform: scale(1, 0.8);
+    }
+
+    90% {
+        transform: scale(1, 0.8);
+    }
+
+    100% {
+        transform: scale(1, 0.4);
+    }
+}
+
+@keyframes barUp3 {
+    0% {
+        transform: scale(1, 0.6);
+    }
+
+    100% {
+        transform: scale(1, 0.6);
+    }
+}
+
+@keyframes barUp4 {
+    0% {
+        transform: scale(1, 0.8);
+    }
+
+    40% {
+        transform: scale(1, 0.8);
+    }
+
+    50% {
+        transform: scale(1, 0.4);
+    }
+
+    90% {
+        transform: scale(1, 0.4);
+    }
+
+    100% {
+        transform: scale(1, 0.8);
+    }
+}
+
+@keyframes barUp5 {
+    0% {
+        transform: scale(1, 1);
+    }
+
+    40% {
+        transform: scale(1, 1);
+    }
+
+    50% {
+        transform: scale(1, 0.2);
+    }
+
+    90% {
+        transform: scale(1, 0.2);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}
 .Trending-analysis{
     grid-area:Trending-analysis;
+    padding:13px;
+}
+.Trending-analysis p{
     padding:13px;
 }
 .market-chart-1{
     grid-area:market-chart-1;
     padding:13px;
-}
-.market-chart-2{
-    grid-area:market-chart-2;
+}   
+.market-chart-1 p{
     padding:13px;
 }
-
-
-.market-chart-2 canvas {
+.market-chart-1 canvas {
     padding:20px;
     width: 100% !important;
     height:85% !important;
 }
 
-@media (max-width:900px){
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+
     .sidebar {
         width: 180px;
     }
+
     .sidebar.collapsed {
         width: 65px;
     }
-    .main{
+
+    .dashboard-main,
+    .main {
         margin-left: 192px;
         width: calc(100% - 192px);
     }
-    .sidebar.collapsed ~ .main{
+
+    .sidebar.collapsed ~ .dashboard-main,
+    .sidebar.collapsed ~ .main {
         margin-left: 77px;
         width: calc(100% - 77px);
     }
-    .search-input{
-        width:90%;
-        height: 10%;;
+
+    .search-input {
+        width: 90%;
     }
+
     .search-input input {
         font-size: 16px;
         padding: 15px;
     }
+
     .infinite-tracker {
         width: 90%;
     }
-    .dashboard{
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        grid-template-rows: repeat(6,minmax(150px, auto));
+
+
+    /* DASHBOARD */
+
+    .dashboard {
         margin-left: 192px;
         width: calc(100% - 192px);
+
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
         grid-template-areas:
-        "headlines headlines top-market top-market"
-        "headlines headlines top-market top-market"
-        "ai-summary ai-summary sentimental-analysis sentimental-analysis"
-        "ai-summary ai-summary sentimental-analysis sentimental-analysis"
-        "ai-summary ai-summary market-chart-1 market-chart-2"
-        "ai-summary ai-summary market-chart-1 market-chart-2";
-    }
-    .sidebar.collapsed ~ .dashboard{
-        margin-left: 77px;
-        width: calc(100% - 77px);
-    }
-}
-@media (max-width:600px){
-    .sidebar{
-        left:5px;
-        width:60px;
-        border-radius:20px;
-    }
-    .sidebar:not(.sidebar.collapsed){
-        width:180px;
-    }
-    .sidebar.collapsed{
-        width:60px;
-    }
-    main{
-        margin-left: 70px;
-        width: calc(100% - 70px);
-    }
-    .sidebar.collapsed ~ .main{
-        margin-left: 190px;
-        width: calc(100% - 190px);
-    }
-    .content h1{
-        font-size: 3rem;
-        letter-spacing: 0.1rem;
-    }
-    .search-input{
-        width:90%;
-        height: 10%;;
-    }
-    .search-input input {
-        font-size: 16px;
-        padding: 15px;
-    }
-    .infinite-tracker {
-        width: 90%;
-    }
-    .dashboard{
-        display:grid;
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(6,auto)  ;
-        margin-left: 70px;
-        width: calc(100% - 70px);
-        grid-template-areas:
-        "headlines"
-        "top-market"
-        "ai-summary"
-        "sentimental-analysis"
-        "market-chart-1"
-        "market-chart-2";
+            "headlines top-market"
+            "headlines top-sources"
+            "ai-summary ai-summary"
+            "Trending-analysis Trending-analysis"
+            "market-chart-1 market-chart-1";
+
         gap: 20px;
     }
-    .sidebar.collapsed ~ .dashboard{
-        margin-left: 190px;
-        width: calc(100% - 190px);
+
+    .sidebar.collapsed ~ .dashboard {
+        margin-left: 77px;
+        width: calc(100% - 77px);
     }
-    
 }
+
+
+/* =========================================================
+   TABLET
+   768px and below
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        width: 65px;
+    }
+
+    .sidebar:not(.collapsed) {
+        width: 180px;
+    }
+
+    .dashboard-main,
+    .main {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+    }
+
+    .sidebar:not(.collapsed) ~ .dashboard-main,
+    .sidebar:not(.collapsed) ~ .main {
+        margin-left: 192px;
+        width: calc(100% - 192px);
+    }
+
+    .sidebar.collapsed ~ .dashboard-main,
+    .sidebar.collapsed ~ .main {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+    }
+
+
+    /* DASHBOARD */
+
+    .dashboard {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+            "headlines"
+            "top-market"
+            "top-sources"
+            "ai-summary"
+            "Trending-analysis"
+            "market-chart-1";
+
+        gap: 16px;
+    }
+
+    .container {
+        position: absolute;
+        top:60%;
+        left:30%;
+    }
+
+    .dot{
+        width: 10px;
+        height:10px;
+    }
+
+    .sidebar:not(.collapsed) ~ .dashboard {
+        margin-left: 192px;
+        width: calc(100% - 192px);
+    }
+
+    .sidebar.collapsed ~ .dashboard {
+        margin-left: 77px;
+        width: calc(100% - 77px);
+    }
+
+
+    .dashboard h2 {
+        font-size: 1.2rem;
+    }
+
+    .content h1,
+    .dashboard-content h1 {
+        font-size: 3rem;
+    }
+}
+/* =========================================================
+   MOBILE / PHONE
+   600px and below
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    /* =====================================================
+       TOP NAVIGATION BAR
+       ===================================================== */
+
+    .sidebar {
+        position: fixed;
+        top: 8px;
+        left: 5px;
+
+        width: calc(100% - 10px) !important;
+        height: 52px !important;
+
+        border-radius: 15px;
+        z-index: 1000;
+
+        overflow: hidden;
+
+        transition: height 0.3s ease;
+    }
+
+    /* CLOSED */
+
+    .sidebar.collapsed {
+        width: calc(100% - 10px) !important;
+        height: 52px !important;
+    }
+
+    /* OPEN */
+
+    .sidebar:not(.collapsed) {
+        width: calc(100% - 10px) !important;
+        height: 115px !important;
+    }
+
+
+    /* =====================================================
+       NAVIGATION HEADER
+       ===================================================== */
+
+    .sidebar header {
+        width: 100%;
+        height: auto;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    .nav-menu {
+        width: 52px;
+        height: 52px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        flex-shrink: 0;
+    }
+
+    .toggle-menu {
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+    }
+
+
+    /* =====================================================
+       MENU
+       ===================================================== */
+
+    .menu-bar {
+        display: none;
+        width: 100%;
+    }
+
+    .sidebar:not(.collapsed) .menu-bar {
+        display: block;
+
+        width: 100%;
+
+        margin-top: 0;
+    }
+
+    .sidebar:not(.collapsed) .menu-links {
+         width: 100%;
+
+        display: flex;
+        flex-direction: row;
+
+        justify-content: space-evenly;
+        align-items: center;
+
+        padding: 0;
+        margin: 0;
+    }
+
+
+    /* =====================================================
+       NAV LINKS
+       ===================================================== */
+
+    .sidebar:not(.collapsed) .nav-link {
+        list-style: none;
+        flex: 1;
+
+        text-align: center;
+    }
+
+    .sidebar:not(.collapsed) .nav-link a {
+        display: flex;
+
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        gap: 3px;
+
+        text-decoration: none;
+    }
+
+
+    /* =====================================================
+       NAV ICONS
+       ===================================================== */
+
+    .sidebar:not(.collapsed) .icons {
+        width: 22px;
+        height: 22px;
+    }
+
+    .sidebar:not(.collapsed) .nav-text {
+        display: block;
+
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+
+    /* =====================================================
+       IMPORTANT:
+       CONTENT ALWAYS STARTS BELOW TOP NAV
+       ===================================================== */
+
+    .main,
+    .dashboard-main {
+        margin-left: 0 !important;
+        width: 100% !important;
+
+        padding-top: 70px;
+        padding-bottom: 20px;
+
+        box-sizing: border-box;
+    }
+
+
+    /* When menu opens, push content down */
+
+    .sidebar:not(.collapsed) ~ .main,
+    .sidebar:not(.collapsed) ~ .dashboard-main {
+        padding-top: 125px;
+    }
+
+
+    /* =====================================================
+       HERO
+       ===================================================== */
+
+    .content,
+    .dashboard-content {
+        width: 100%;
+
+        padding: 10px 15px 0 15px;
+
+        box-sizing: border-box;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        text-align: center;
+    }
+
+
+    /* =====================================================
+       SENTIPULSE
+       ===================================================== */
+
+    .content h1,
+    .dashboard-content h1 {
+        font-size: 2.2rem;
+
+        letter-spacing: 0.05rem;
+
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+
+    /* =====================================================
+       SEARCH BAR
+       ===================================================== */
+
+    .search-input {
+        width: 100%;
+        max-width: 430px;
+
+        height: 50px;
+
+        display: flex;
+        flex-direction: row;
+
+        margin: 0 auto;
+    }
+
+    .search-input input {
+        flex: 1;
+
+        min-width: 0;
+
+        height: 100%;
+
+        font-size: 14px;
+        padding: 10px;
+
+        box-sizing: border-box;
+    }
+
+    .search-input button {
+        width: 50px;
+        height: 50px;
+
+        flex-shrink: 0;
+
+        padding: 8px;
+    }
+
+    .search-input button img {
+        width: 21px;
+        height: 21px;
+    }
+
+
+    /* =====================================================
+       INDEX PAGE TRACKER
+       ===================================================== */
+
+    .infinite-tracker {
+        width: 100%;
+        margin-top: 18px;
+
+        overflow: hidden;
+    }
+
+
+    /* =====================================================
+       DASHBOARD
+       ===================================================== */
+
+    .dashboard {
+        margin-left: 0 !important;
+        width: 100% !important;
+
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        grid-template-areas:
+            "headlines"
+            "top-market"
+            "top-sources"
+            "ai-summary"
+            "Trending-analysis"
+            "market-chart-1";
+
+        gap: 15px;
+
+        padding: 15px;
+
+        box-sizing: border-box;
+    }
+    .container {
+        position: absolute;
+        top:50%;
+        left:30%;
+    }
+
+    .dot{
+        width: 10px;
+        height:10px;
+    }
+
+    /* IMPORTANT:
+       Sidebar must NOT affect dashboard width */
+
+    .sidebar.collapsed ~ .dashboard,
+    .sidebar:not(.collapsed) ~ .dashboard {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+
+    /* =====================================================
+       DASHBOARD CARDS
+       ===================================================== */
+
+    .dashboard > div {
+        width: 100%;
+        min-width: 0;
+
+        box-sizing: border-box;
+    }
+
+
+    /* =====================================================
+       CHARTS
+       ===================================================== */
+
+    canvas {
+        max-width: 100% !important;
+    }
+
+
+    /* =====================================================
+       PHONE
+       480px and below
+       ===================================================== */
+
+    @media (max-width: 480px) {
+
+        .content,
+        .dashboard-content {
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+
+        .content h1,
+        .dashboard-content h1 {
+            font-size: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+        }
+
+        .dashboard {
+            padding: 10px;
+            gap: 12px;
+        }
+
+        .dashboard > div {
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .dashboard h2 {
+            font-size: 1rem;
+        }
+
+        .dashboard p {
+            font-size: 0.9rem;
+        }
+    }
+
+
+    /* =====================================================
+       SMALL PHONE
+       390px and below
+       ===================================================== */
+
+    @media (max-width: 390px) {
+
+        .content,
+        .dashboard-content {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .content h1,
+        .dashboard-content h1 {
+            font-size: 1.8rem;
+
+            margin-top: 8px;
+            margin-bottom: 18px;
+        }
+
+        .search-input {
+            height: 48px;
+        }
+
+        .search-input input {
+            font-size: 13px;
+            padding: 9px;
+        }
+
+        .search-input button {
+            width: 48px;
+            height: 48px;
+        }
+
+        .search-input button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .dashboard {
+            padding: 8px;
+            gap: 10px;
+        }
+
+        .dashboard > div {
+            padding: 12px;
+            border-radius: 13px;
+        }
+
+        .dashboard h2 {
+            font-size: 0.95rem;
+        }
+
+        .dashboard p {
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+    }
+}
+

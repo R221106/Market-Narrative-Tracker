@@ -19,31 +19,12 @@ async function loadDashboard() {
 
 function renderCharts(topics, counts) {
     const marketChart1 = document.getElementById("chart-1");
+    if (!marketChart1) {
+        console.error("chart-1 canvas was not found");
+        return;
+    }
 
     new Chart(marketChart1, {
-        type: "pie",
-        data: {
-            labels: topics,
-            datasets: [
-                {
-                    label: "Market Interest",
-                    data: counts
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: "right"
-                }
-            }
-        }
-    });
-
-    const marketChart2 = document.getElementById("chart-2");
-
-    new Chart(marketChart2, {
         type: "line",
         data: {
             labels: topics,
@@ -68,27 +49,17 @@ function renderCharts(topics, counts) {
 async function loadHeadlines(topic) {
     if(!topic) return;
     try {
-        const newsResponse = await fetch(
-            `http://127.0.0.1:5000/api/news?topic=${encodeURIComponent(topic)}`
-        );
-
-        if (!newsResponse.ok) {
-            throw new Error("Failed to load headlines");
-        }
-
-        const newsData = await newsResponse.json();
-
-        const sentimelResponse = await fetch(
+        const [newsResponse,sentimelResponse]= await Promise.all([
+            fetch(
+            `http://127.0.0.1:5000/api/news?topic=${encodeURIComponent(topic)}`),
+            fetch(
             `http://127.0.0.1:5000/api/sentiment?topic=${encodeURIComponent(topic)}`
-        );
-
+        )]);
+        if (!newsResponse.ok) {
+            throw new Error("Failed to load headlines"); }
         if (!sentimelResponse.ok) {
-            throw new Error("Failed to load headlines");
-        }
-
-        const sentimentalData = await sentimelResponse.json();
-
-
+            throw new Error("Failed to load headlines");}
+        const [newsData,sentimentalData]= await Promise.all([newsResponse.json(),sentimelResponse.json()]);
         const container = document.getElementById("news-container");
 
         container.innerHTML = "";
@@ -100,7 +71,7 @@ async function loadHeadlines(topic) {
             );
             card.innerHTML = `
                 <div class="headline-title">
-                    <a href="${article.url}" target="_blank">
+                    <a href="${article.url}" target="_blank" rel="noopener noreferrer">
                         <h3>${article.title}</h3>
                     </a>
                     <div class="sentiments">
@@ -118,40 +89,30 @@ async function loadHeadlines(topic) {
     }
 }
 
+// Side bar Closing and Opening 
 const sidebar=document.querySelector(".sidebar");
 const toggleMenu = document.querySelector(".toggle-menu");
 if(sidebar && toggleMenu){
     const sidebarState=localStorage.getItem("sidebarState");
     if(sidebarState === "collapsed") sidebar.classList.add("collapsed");
+    toggleMenu.addEventListener("click", function () {
+        sidebar.classList.toggle("collapsed");
+        if(sidebar.classList.contains("collapsed")) {
+            localStorage.setItem("sidebarState","collapsed");
+        }
+        else {
+            localStorage.setItem("sidebarState","open");
+        }
+    });
 }
-toggleMenu.addEventListener("click", function () {
-    sidebar.classList.toggle("collapsed");
-    if(sidebar.classList.contains("collapsed")) localStorage.setItem("sidebarState","collapsed");
-    else localStorage.setItem("sidebarState","open");
-});
 
 function getSentimentalBadge(sentiment) {
     if (sentiment === "positive") {
-        return `
-            <img
-                src="../Images/Positive.png"
-                alt="positive-badge"
-            >
-        `;
+        return `<span class="sentiment sentiment-positive">POSITIVE</span>`;
     } else if (sentiment === "neutral") {
-        return `
-            <img
-                src="../Images/Neutral.png"
-                alt="neutral-badge"
-            >
-        `;
+        return `<span class="sentiment sentiment-neutral">NEUTRAL</span>`;
     } else {
-        return `
-            <img
-                src="../Images/Negative.png"
-                alt="negative-badge"
-            >
-        `;
+        return `<span class="sentiment sentiment-negative">NEGATIVE</span>`;
     }
 }
 
@@ -170,7 +131,10 @@ async function loadTrending(topic) {
         const trendInfo=document.getElementById("trend-info");
         trendInfo.innerHTML=`Topic: ${trendTopic} | Trend:${trend}`;
         const TrendChart = document.getElementById("trend-chart");
-
+        if (!TrendChart) {
+        console.error("chart-1 canvas was not found");
+        return;
+    }
         new Chart(TrendChart, {
             type: "line",
             data: {
@@ -229,7 +193,7 @@ function getSources(sources){
       const sourceCard = document.createElement("div");
       sourceCard.innerHTML = `
           <div class="source-info">
-            <p><b>${s.source} </b>| ${s.count} articles <p>
+            <p><b>${s.source} </b>| ${s.count} articles </p>
             <div class="source-share">${s.share}%</div>
           </div>
           <div class="source-bar">
@@ -241,6 +205,28 @@ function getSources(sources){
       container.appendChild(sourceCard);
   });
 }
+
+async function loadSummary(topic){
+    const loading = document.getElementById("summary-loading");
+    const summaryContent = document.getElementById("summary-content");
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/api/summary?topic=${encodeURIComponent(topic)}`);
+        if (!response.ok) throw new Error("Failed to load AI Summary");
+        const data = await response.json();
+        console.log(data.summary);
+        summaryContent.innerHTML=`
+            <h3>Topic: ${data.topic}</h3><br>
+            <p>Sentimental Tone: ${data.sentiment}</p><br>
+            <p>${data.summary}</p>
+        `;
+    } catch (error) {
+        console.error("AI Summary error:", error);
+        summaryContent.innerHTML=`<p>Unable to Generate a Summary</p>`;
+    } finally{
+        if(loading) loading.style.display="none";
+    }
+}
+
 //For the Search DashBoard !!
 // To get the topic from the URL 
 const urlparams=new URLSearchParams(window.location.search);
@@ -253,6 +239,7 @@ if(topic){
     loadHeadlines(topic);
     loadSources(topic);
     loadTrending(topic);
+    loadSummary(topic);
 }else{
     document.title=`Market Narrative Dashboard`;
     searchInput.placeholder=`No search Topic provided`;
