@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: market-narrative-tracker
+    env: python
+    buildCommand: pip install -r requirements.txt && python nltk_setup.py
+    startCommand: gunicorn app:app
+    envVars:
+      - key: NEWS_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.13.2
