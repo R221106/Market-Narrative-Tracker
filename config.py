@@ -94,3 +94,7 @@ def sanitize_topic(topic):
     """remove special characters, limit length"""
     cleaned = re.sub(r'[^\w\s-]', '', topic)
     return cleaned.strip()[:MAX_TOPIC_LENGTH]
+
+GNEWS_API_KEY     = os.getenv("GNEWS_API_KEY")
+GNEWS_BASE_URL    = "https://gnews.io/api/v4/search"
+GNEWS_MAX_RESULTS = 10
