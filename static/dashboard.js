@@ -1,8 +1,8 @@
 // Dashboard.js
-
+const API_URL = "https://market-narrative-tracker.onrender.com";
 async function loadDashboard() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/api/dashboard");
+        const response = await fetch(`${API_URL}/api/dashboard`);
 
         if (!response.ok) {
             throw new Error("Failed to load dashboard data");
@@ -46,14 +46,39 @@ function renderCharts(topics, counts) {
     });
 }
 
+async function loadTopSearches() {
+    try {
+        const response = await fetch(`${API_URL}/api/popular`);
+
+        if (!response.ok) {
+            throw new Error("Failed to load popular topics");
+        }
+
+        const data = await response.json();
+
+        const container = document.getElementById("top-searches");
+
+        if (!container) return;
+
+        container.innerHTML = "";
+
+        data.popular_topics.forEach(item => {
+            const topic = document.createElement("p");
+            topic.textContent = `${item.topic} — ${item.searches} searches`;
+            container.appendChild(topic);
+        });
+
+    } catch (error) {
+        console.error("Top searches error:", error);
+    }
+}
+
 async function loadHeadlines(topic) {
     if(!topic) return;
     try {
         const [newsResponse,sentimelResponse]= await Promise.all([
-            fetch(
-            `http://127.0.0.1:5000/api/news?topic=${encodeURIComponent(topic)}`),
-            fetch(
-            `http://127.0.0.1:5000/api/sentiment?topic=${encodeURIComponent(topic)}`
+            fetch(`${API_URL}/api/news?topic=${encodeURIComponent(topic)}`),
+            fetch(`${API_URL}/api/sentiment?topic=${encodeURIComponent(topic)}`
         )]);
         if (!newsResponse.ok) {
             throw new Error("Failed to load headlines"); }
@@ -61,7 +86,14 @@ async function loadHeadlines(topic) {
             throw new Error("Failed to load headlines");}
         const [newsData,sentimentalData]= await Promise.all([newsResponse.json(),sentimelResponse.json()]);
         const container = document.getElementById("news-container");
-
+        if (!newsData.articles || newsData.articles.length === 0) {
+            document.title = "Market Narrative Dashboard";
+            searchInput.placeholder = "No search topic provided";
+            if (container) {
+                container.innerHTML = "<p> <b> No results found for this topic. </b> </p>";
+            }
+            return;
+        }
         container.innerHTML = "";
 
         newsData.articles.slice(0, 5).forEach(article => {
@@ -118,7 +150,7 @@ function getSentimentalBadge(sentiment) {
 
 async function loadTrending(topic) {
     try {
-        const response = await fetch( `http://127.0.0.1:5000/api/trend?topic=${encodeURIComponent(topic)}`
+        const response = await fetch( `${API_URL}/api/trend?topic=${encodeURIComponent(topic)}`
         );
         if (!response.ok) {
             throw new Error("Failed to load dashboard data");
@@ -175,7 +207,7 @@ async function loadTrending(topic) {
 
 async function loadSources(topic){
   try {
-        const response = await fetch(`http://127.0.0.1:5000/api/sources?topic=${encodeURIComponent(topic)}`);
+        const response = await fetch(`${API_URL}/api/sources?topic=${encodeURIComponent(topic)}`);
         if (!response.ok) throw new Error("Failed to load sources data");
         const data = await response.json();
         getSources(data.sources);
@@ -210,7 +242,7 @@ async function loadSummary(topic){
     const loading = document.getElementById("summary-loading");
     const summaryContent = document.getElementById("summary-content");
     try {
-        const response = await fetch(`http://127.0.0.1:5000/api/summary?topic=${encodeURIComponent(topic)}`);
+        const response = await fetch(`${API_URL}/api/summary?topic=${encodeURIComponent(topic)}`);
         if (!response.ok) throw new Error("Failed to load AI Summary");
         const data = await response.json();
         console.log(data.summary);
@@ -256,3 +288,4 @@ searchInput.addEventListener("keydown",function(event){
     if(event.key==="Enter") performSearch();
 });
 loadDashboard();
+loadTopSearches();

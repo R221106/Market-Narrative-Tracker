@@ -1,3 +1,4 @@
+/* GLOBAL */
 * {
     margin: 0;
     padding: 0;
@@ -11,6 +12,7 @@ body {
     font-family:sans-serif;
 }
 
+/* The Main content */
 .main {
     position: relative;
     margin-left:232px;
@@ -171,7 +173,7 @@ body {
     letter-spacing: 0.3rem;
 }
 
-
+/* Search bar */
 .search-input{
     width:58%;
     height: 60px;
@@ -205,7 +207,7 @@ body {
 .search-input button img{
     width: 25px;
 }
-
+/* The Search Results */
 .newsCard a{
     color: rgb(235, 239, 242);
     text-decoration: none;
@@ -248,7 +250,7 @@ body {
 .search-results {
     width: 100%;
 }
-
+/* AI Summary */
 .ai-summary{
     background: rgba(240, 255, 255, 0.354);
     backdrop-filter: blur(2px) saturate(200%);
@@ -518,15 +520,12 @@ body {
     }
 }
 
-/* =========================================================
-   SEARCH PAGE RESPONSIVE DESIGN
-   ========================================================= */
+/* SEARCH PAGE RESPONSIVE DESIGN */
 
 
-/* =========================================================
+/* 
    TABLET
-   768px and below
-   ========================================================= */
+   768px and below */
 
 @media (max-width: 768px) {
 

@@ -1,3 +1,4 @@
+const API_URL = "https://market-narrative-tracker.onrender.com";
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
 searchButton.addEventListener("click",function(){
@@ -25,7 +26,7 @@ if(sidebar && toggleMenu){
 
 async function getkeywords() {
     try{
-        const response=await fetch( `http://127.0.0.1:5000/api/dashboard`); // fetching the data
+        const response=await fetch( `${API_URL}/api/dashboard`); // fetching the data
         if(!response.ok) throw new Error("Failed to fetch the error!")
         const data = await response.json();
         displayKeywords(data.topics);
