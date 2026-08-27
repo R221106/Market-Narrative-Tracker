@@ -1,3 +1,5 @@
+/* GLOBAL / RESET */
+
 :root {
     --sidebar-width: 220px;
     --sidebar-collapsed-width: 70px;
@@ -42,6 +44,7 @@ body {
     width: calc(100% - var(--main-offset));
     transition: margin-left var(--transition-speed) ease, width var(--transition-speed) ease;
 }
+/* Loading*/
 .loading{
     display: flex;
     align-items: center;
@@ -94,6 +97,7 @@ animation-delay: 0.2s;
 }
 }
 
+/* Sidebar*/
 .sidebar.collapsed ~.main{
     margin-left:var(--collapsed-offset);
     width: calc(100% - var(--collapsed-offset));
@@ -218,7 +222,7 @@ animation-delay: 0.2s;
 }
 
 
-/* Navigation Ends Here ! */
+/* Main Content ! */
 .backgroundVideo {
     position: absolute;
     top: 0;
@@ -281,7 +285,7 @@ animation-delay: 0.2s;
     letter-spacing: 0.3rem;
 }
 
-
+/* Search bar */
 .search-input{
     width:60%;
     height: 10%;
@@ -342,6 +346,8 @@ animation-delay: 0.2s;
     transform:scale(1.1);
 }
 
+/* Infinite Tracker */
+
 .infinite-tracker{
     width:60%;
     overflow: hidden;
@@ -396,6 +402,7 @@ animation-delay: 0.2s;
     }
 }
 
+/* Dashboard */
 .dashboard{
     display:grid;
     grid-template-columns: repeat(10,1fr);
@@ -817,6 +824,10 @@ animation-delay: 0.2s;
         transform: scale(1, 1);
     }
 }
+.top-market #top-searches{
+    padding-right:100px;
+}
+
 .Trending-analysis{
     grid-area:Trending-analysis;
     padding:13px;

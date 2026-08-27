@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 
 from flask_cors import CORS
 
@@ -31,7 +31,7 @@ from summariser import generate_summary
 # FLASK APP
 # ============================================================
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="static", static_url_path="")
 
 CORS(app)
 
@@ -72,8 +72,27 @@ def topic_error():
 @app.route("/")
 def home():
 
-    return "Market Narrative Tracker — backend running"
+    return send_from_directory("static", "index.html")
 
+@app.route("/Images/<path:filename>")
+def images(filename):
+    return send_from_directory("Images", filename)
+
+
+@app.route("/Videos/<path:filename>")
+def videos(filename):
+    return send_from_directory("Videos", filename)
+
+# ============================================================
+# HEALTH ENDPOINT
+# ============================================================
+
+@app.route("/api/health")
+def health():
+    return jsonify({
+        "status": "healthy",
+        "service": "Market Narrative Tracker"
+    }), 200
 
 # ============================================================
 # NEWS

@@ -1,7 +1,7 @@
-console.log("SEARCH.JS LOADED");
+const API_URL = "https://market-narrative-tracker.onrender.com";
 async function getData(topic) {
     try{
-        const response=await fetch( `http://127.0.0.1:5000/api/news?topic=${encodeURIComponent(topic)}`); // fetching the data
+        const response=await fetch( `${API_URL}/api/news?topic=${encodeURIComponent(topic)}`); // fetching the data
         if(!response.ok) throw new Error("Failed to fetch the error!")
         const data = await response.json();
         fetchNews(data.articles);
@@ -29,10 +29,10 @@ function fetchNews(article){
         const newsCard=document.createElement("div");
         newsCard.classList.add("newsCard"); //<div class="newsCard"></div>
         newsCard.innerHTML=`
-                <a href="${element.url}" target="_blank">
+                <a href="${element.url}" target="_blank" rel="noopener noreferrer">
                     <h3>${element.title}</h3>
                 </a>
-                <p>${element.description || "No desciption Available."}</p> <br>
+                <p>${element.description || "No description Available.."}</p> <br>
         `;
         searchResult.append(newsCard)
     });
@@ -42,7 +42,7 @@ async function loadSummary(topic){
     const loading = document.getElementById("summary-loading");
     const summaryContent = document.getElementById("summary-content");
     try {
-        const response = await fetch(`http://127.0.0.1:5000/api/summary?topic=${encodeURIComponent(topic)}`);
+        const response = await fetch(`${API_URL}/api/summary?topic=${encodeURIComponent(topic)}`);
         if (!response.ok) throw new Error("Failed to load AI Summary");
         const data = await response.json();
         console.log(data.summary);
@@ -51,11 +51,17 @@ async function loadSummary(topic){
             <p>${data.sentiment}</p><br>
             <p>${data.summary}</p>
         `;
-        loading.style.display = "none";
+        if (loading) {
+            loading.style.display = "none";
+        }
     } catch (error) {
         console.error("AI Summary error:", error);
-        loading.style.display = "none";
-        summaryContent.innerHTML=`<p>Unable to Generate a Summary</p>`;
+        if (loading) {
+            loading.style.display = "none";
+        }
+        if (summaryContent) {
+            summaryContent.innerHTML = `<p>Unable to Generate a Summary</p>`;
+        }
     }
 }
 
@@ -64,8 +70,8 @@ const urlparams=new URLSearchParams(window.location.search);
 const topic =urlparams.get("topic");
 const searchTopic=document.getElementById("search-topic");
 const searchInput = document.getElementById("search-input");
-document.title=`Search for ${topic}`;
 if(topic){
+    document.title=`Search for ${topic}`;
     searchTopic.textContent=`You searched for ${topic}`;
     searchInput.placeholder=`Searched for ${topic}`;
     getData(topic);
