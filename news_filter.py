@@ -1,6 +1,4 @@
-# ============================================================
-# MARKET RELEVANCE FILTER
-# ============================================================
+import re
 
 
 # ============================================================
@@ -114,7 +112,6 @@ EXCLUDED_KEYWORDS = [
     "fashion",
     "saree",
     "red carpet",
-
     "reality tv",
 
     # Lifestyle
@@ -250,9 +247,39 @@ def get_article_text(article):
     description = article.get("description") or ""
     content = article.get("content") or ""
 
+    return f"{title} {description} {content}".lower()
+
+
+def get_article_title(article):
+
     return (
-        f"{title} {description} {content}"
+        article.get("title") or ""
     ).lower()
+
+
+# ============================================================
+# KEYWORD MATCHING
+# ============================================================
+
+def keyword_matches(text, keyword):
+    """
+    Checks whether a keyword appears as a complete
+    word or phrase.
+
+    This prevents 'AI' from matching words such as:
+    'said', 'daily', etc.
+    """
+
+    pattern = (
+        r"\b"
+        + re.escape(keyword.lower())
+        + r"\b"
+    )
+
+    return re.search(
+        pattern,
+        text.lower()
+    ) is not None
 
 
 # ============================================================
@@ -260,12 +287,20 @@ def get_article_text(article):
 # ============================================================
 
 def contains_excluded_keyword(article):
+    """
+    Checks the article TITLE for obvious irrelevant
+    categories.
 
-    text = get_article_text(article)
+    We primarily use the title here because words such
+    as 'game' or 'score' may appear in an otherwise
+    relevant article's description.
+    """
+
+    title = get_article_title(article)
 
     for keyword in EXCLUDED_KEYWORDS:
 
-        if keyword.lower() in text:
+        if keyword_matches(title, keyword):
             return True
 
     return False
@@ -276,6 +311,9 @@ def contains_excluded_keyword(article):
 # ============================================================
 
 def get_narrative_matches(article, narrative):
+    """
+    Finds keywords related to the selected narrative.
+    """
 
     text = get_article_text(article)
 
@@ -288,7 +326,7 @@ def get_narrative_matches(article, narrative):
 
     for keyword in keywords:
 
-        if keyword.lower() in text:
+        if keyword_matches(text, keyword):
             matches.append(keyword)
 
     return matches
@@ -299,6 +337,9 @@ def get_narrative_matches(article, narrative):
 # ============================================================
 
 def get_market_matches(article):
+    """
+    Finds business/market-related keywords.
+    """
 
     text = get_article_text(article)
 
@@ -306,7 +347,7 @@ def get_market_matches(article):
 
     for keyword in MARKET_KEYWORDS:
 
-        if keyword.lower() in text:
+        if keyword_matches(text, keyword):
             matches.append(keyword)
 
     return matches
@@ -320,6 +361,13 @@ def calculate_relevance_score(
     article,
     narrative
 ):
+    """
+    Calculates a relevance score.
+
+    Narrative keyword = +3
+    Market keyword = +1
+    Narrative keyword in title = +3
+    """
 
     narrative_matches = get_narrative_matches(
         article,
@@ -330,22 +378,31 @@ def calculate_relevance_score(
         article
     )
 
-    title = (
-        article.get("title") or ""
-    ).lower()
+    title = get_article_title(article)
 
     score = 0
 
+    # --------------------------------------------------------
     # Narrative relevance
-    score += len(narrative_matches) * 3
+    # --------------------------------------------------------
 
+    score += (
+        len(narrative_matches) * 3
+    )
+
+    # --------------------------------------------------------
     # Market/business relevance
+    # --------------------------------------------------------
+
     score += len(market_matches)
 
-    # Extra importance if narrative appears in title
+    # --------------------------------------------------------
+    # Extra weight for narrative appearing in title
+    # --------------------------------------------------------
+
     for keyword in narrative_matches:
 
-        if keyword.lower() in title:
+        if keyword_matches(title, keyword):
 
             score += 3
 
@@ -353,45 +410,51 @@ def calculate_relevance_score(
 
 
 # ============================================================
-# FILTER
+# FILTER ARTICLES
 # ============================================================
 
 def filter_articles(
     articles,
     narrative,
-    minimum_score=5
+    minimum_score=2
 ):
+    """
+    Filters articles so that only relevant
+    market-narrative articles remain.
+
+    Default minimum score = 2.
+    """
 
     filtered_articles = []
 
     for article in articles:
 
-        # --------------------------------------------
-        # Remove obvious irrelevant content
-        # --------------------------------------------
+        # ----------------------------------------------------
+        # 1. Remove obvious irrelevant articles
+        # ----------------------------------------------------
 
         if contains_excluded_keyword(article):
             continue
 
-        # --------------------------------------------
-        # Calculate relevance
-        # --------------------------------------------
+        # ----------------------------------------------------
+        # 2. Calculate relevance
+        # ----------------------------------------------------
 
         score = calculate_relevance_score(
             article,
             narrative
         )
 
-        # --------------------------------------------
-        # Remove low relevance articles
-        # --------------------------------------------
+        # ----------------------------------------------------
+        # 3. Remove low-relevance articles
+        # ----------------------------------------------------
 
         if score < minimum_score:
             continue
 
-        # --------------------------------------------
-        # Add filtering information
-        # --------------------------------------------
+        # ----------------------------------------------------
+        # 4. Store useful metadata
+        # ----------------------------------------------------
 
         article["relevance_score"] = score
 
@@ -408,7 +471,10 @@ def filter_articles(
 
         filtered_articles.append(article)
 
-    # Highest relevance first
+    # --------------------------------------------------------
+    # 5. Highest relevance first
+    # --------------------------------------------------------
+
     filtered_articles.sort(
         key=lambda article: article["relevance_score"],
         reverse=True

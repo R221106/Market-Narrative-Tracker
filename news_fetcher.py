@@ -21,14 +21,13 @@ def build_search_query(narrative):
     queries = {
 
         "AI": (
-            '("artificial intelligence" OR '
-            '"generative AI" OR "machine learning" OR '
-            '"large language model" OR LLM OR '
-            'Nvidia OR "AI infrastructure") '
-            'AND (market OR investment OR investor OR '
-            'company OR industry OR earnings OR revenue OR '
-            'funding OR spending OR regulation OR '
-            'semiconductor OR "data center")'
+            '"artificial intelligence" OR '
+            '"generative AI" OR '
+            '"machine learning" OR '
+            '"large language model" OR '
+            'LLM OR '
+            'Nvidia OR '
+            '"AI infrastructure"'
         ),
 
         "EV": (
