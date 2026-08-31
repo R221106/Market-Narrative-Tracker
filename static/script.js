@@ -1,10 +1,14 @@
-const API_URL = "https://market-narrative-tracker.onrender.com";
+const API_URL = "";
 const searchInput = document.getElementById("search-input");
 const searchButton = document.getElementById("search-button");
-searchButton.addEventListener("click",function(){
-    const topic = searchInput.value.trim();
+function performSearch(){
+    const topic = searchInput.value.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g," ");
     if(!topic) return;
     window.location.href=`search.html?topic=${encodeURIComponent(topic)}`;
+}
+searchButton.addEventListener("click",performSearch);
+searchInput.addEventListener("keydown",function(event){
+    if(event.key==="Enter") performSearch();
 });
 
 // Side bar Closing and Opening 

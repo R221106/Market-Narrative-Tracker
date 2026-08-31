@@ -1,5 +1,5 @@
 // Dashboard.js
-const API_URL = "https://market-narrative-tracker.onrender.com";
+const API_URL = "";
 async function loadDashboard() {
     try {
         const response = await fetch(`${API_URL}/api/dashboard`);
@@ -64,7 +64,7 @@ async function loadTopSearches() {
 
         data.popular_topics.forEach(item => {
             const topic = document.createElement("p");
-            topic.textContent = `${item.topic} — ${item.searches} searches`;
+            topic.innerHTML = `<b>${item.topic}</b> — ${item.searches} searches`;
             container.appendChild(topic);
         });
 
@@ -210,7 +210,7 @@ async function loadSources(topic){
         const response = await fetch(`${API_URL}/api/sources?topic=${encodeURIComponent(topic)}`);
         if (!response.ok) throw new Error("Failed to load sources data");
         const data = await response.json();
-        getSources(data.sources);
+        getSources(data.sources,topic);
         console.log(data.sources);
 
     } catch (error) {
@@ -218,9 +218,15 @@ async function loadSources(topic){
     }
 }
 
-function getSources(sources){
+function getSources(sources,topic){
   const container = document.getElementById("top-sources-container");
   container.innerHTML = "";
+  if (!sources || sources.length === 0) {
+        container.innerHTML = `
+            <p>No Top Sources for "${topic}"</p>
+        `;
+        return;
+    }
   sources.forEach(s => {
       const sourceCard = document.createElement("div");
       sourceCard.innerHTML = `

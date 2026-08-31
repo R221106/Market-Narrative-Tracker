@@ -1,4 +1,4 @@
-const API_URL = "https://market-narrative-tracker.onrender.com";
+const API_URL = "";
 async function getData(topic) {
     try{
         const response=await fetch( `${API_URL}/api/news?topic=${encodeURIComponent(topic)}`); // fetching the data
