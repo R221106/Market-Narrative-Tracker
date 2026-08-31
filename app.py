@@ -40,7 +40,7 @@ def get_filtered_articles(topic):
     return filter_articles(
         articles,
         topic,
-        minimum_score=3
+        minimum_score= 2
     )
 # ============================================================
 # FRONTEND PAGES
