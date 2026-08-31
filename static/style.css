@@ -534,6 +534,9 @@ animation-delay: 0.2s;
     grid-area: top-sources;
     padding: 13px;
 }
+#top-sources-container p{
+    padding: 10px;
+}
 .sourceCard{
     display:flex;
     align-items: center;
@@ -561,6 +564,9 @@ animation-delay: 0.2s;
 }
 .source-share {
     text-align: right;
+}
+#top-searches p{
+    padding: 13px;
 }
 .ai-summary{
     grid-area:ai-summary;
