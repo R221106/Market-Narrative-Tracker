@@ -9,6 +9,7 @@ from sources import analyze_sources
 from database import init_db, get_popular_topics
 from config import DEFAULT_TOPIC, WATCHLIST_TOPICS
 from summariser import generate_summary
+from news_filter import filter_articles
 
 # ============================================================
 # FLASK APP
@@ -29,6 +30,18 @@ def get_topic():
 def topic_error():
     return jsonify({"error": "Topic cannot be empty"}), 400
 
+def get_filtered_articles(topic):
+    """
+    Fetch news and filter it for market-narrative relevance.
+    """
+
+    articles = fetch_news(topic)
+
+    return filter_articles(
+        articles,
+        topic,
+        minimum_score=5
+    )
 # ============================================================
 # FRONTEND PAGES
 # ============================================================
@@ -68,9 +81,16 @@ def health():
 @app.route("/api/news")
 def news():
     topic = get_topic()
+
     if not topic:
         return topic_error()
-    return jsonify({"topic": topic, "articles": fetch_news(topic)})
+
+    articles = get_filtered_articles(topic)
+
+    return jsonify({
+        "topic": topic,
+        "articles": articles
+    })
 
 # ============================================================
 # SENTIMENT
@@ -79,12 +99,15 @@ def news():
 @app.route("/api/sentiment")
 def sentiment():
     topic = get_topic()
+
     if not topic:
         return topic_error()
-    articles = fetch_news(topic)
+
+    articles = get_filtered_articles(topic)
+
     return jsonify({
-        "topic":    topic,
-        "overall":  analyze_articles(articles),
+        "topic": topic,
+        "overall": analyze_articles(articles),
         "articles": analyze_articles_individually(articles)
     })
 
@@ -95,11 +118,19 @@ def sentiment():
 @app.route("/api/keywords")
 def keywords():
     topic = get_topic()
+
     if not topic:
         return topic_error()
-    articles = fetch_news(topic)
+
+    articles = get_filtered_articles(topic)
+
     top_keywords = extract_keywords(articles)
-    return jsonify({"topic": topic, "count": len(top_keywords), "keywords": top_keywords})
+
+    return jsonify({
+        "topic": topic,
+        "count": len(top_keywords),
+        "keywords": top_keywords
+    })
 
 # ============================================================
 # TREND
@@ -108,9 +139,15 @@ def keywords():
 @app.route("/api/trend")
 def trend():
     topic = get_topic()
+
     if not topic:
         return topic_error()
-    return jsonify(analyze_trend(fetch_news(topic), topic))
+
+    articles = get_filtered_articles(topic)
+
+    return jsonify(
+        analyze_trend(articles, topic)
+    )
 
 # ============================================================
 # SOURCES
@@ -119,9 +156,16 @@ def trend():
 @app.route("/api/sources")
 def sources():
     topic = get_topic()
+
     if not topic:
         return topic_error()
-    return jsonify({"topic": topic, "sources": analyze_sources(fetch_news(topic))})
+
+    articles = get_filtered_articles(topic)
+
+    return jsonify({
+        "topic": topic,
+        "sources": analyze_sources(articles)
+    })
 
 # ============================================================
 # WATCHLIST TOPICS
@@ -130,11 +174,24 @@ def sources():
 @app.route("/api/topics")
 def topics():
     topic_data = []
+
     for t in WATCHLIST_TOPICS:
-        articles = fetch_news(t)
-        topic_data.append({"topic": t, "article_count": len(articles)})
-    topic_data.sort(key=lambda x: x["article_count"], reverse=True)
-    return jsonify({"topics": topic_data})
+
+        articles = get_filtered_articles(t)
+
+        topic_data.append({
+            "topic": t,
+            "article_count": len(articles)
+        })
+
+    topic_data.sort(
+        key=lambda x: x["article_count"],
+        reverse=True
+    )
+
+    return jsonify({
+        "topics": topic_data
+    })
 
 # ============================================================
 # POPULAR TOPICS
@@ -151,10 +208,21 @@ def popular():
 @app.route("/api/dashboard")
 def dashboard():
     topic_data = []
+
     for t in WATCHLIST_TOPICS:
-        articles = fetch_news(t)
-        topic_data.append({"topic": t, "article_count": len(articles)})
-    topic_data.sort(key=lambda x: x["article_count"], reverse=True)
+
+        articles = get_filtered_articles(t)
+
+        topic_data.append({
+            "topic": t,
+            "article_count": len(articles)
+        })
+
+    topic_data.sort(
+        key=lambda x: x["article_count"],
+        reverse=True
+    )
+
     return jsonify({
         "topics": [i["topic"] for i in topic_data],
         "counts": [i["article_count"] for i in topic_data]
@@ -167,22 +235,31 @@ def dashboard():
 @app.route("/api/summary")
 def summary():
     topic = get_topic()
+
     if not topic:
         return topic_error()
-    articles = fetch_news(topic)
+
+    articles = get_filtered_articles(topic)
+
     sentiment = analyze_articles(articles)
-    kws = extract_keywords(articles, top_n=5)
+
+    kws = extract_keywords(
+        articles,
+        top_n=5
+    )
+
     narrative = generate_summary(
         topic=topic,
         articles=articles,
         sentiment_label=sentiment["label"],
         top_keywords=kws
     )
+
     return jsonify({
-        "topic":     topic,
-        "summary":   narrative,
+        "topic": topic,
+        "summary": narrative,
         "sentiment": sentiment["label"],
-        "keywords":  [kw["word"] for kw in kws]
+        "keywords": [kw["word"] for kw in kws]
     })
 
 # ============================================================
