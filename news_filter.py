@@ -1,483 +1,93 @@
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 import re
 
-
 # ============================================================
-# MARKET KEYWORDS
-# ============================================================
-
-MARKET_KEYWORDS = [
-
-    "market",
-    "markets",
-    "stock",
-    "stocks",
-    "share",
-    "shares",
-
-    "investor",
-    "investors",
-    "investment",
-    "investments",
-
-    "revenue",
-    "earnings",
-    "profit",
-    "profits",
-    "loss",
-    "valuation",
-
-    "company",
-    "companies",
-    "industry",
-    "industries",
-
-    "demand",
-    "growth",
-    "sales",
-
-    "funding",
-    "acquisition",
-    "merger",
-
-    "regulation",
-    "regulatory",
-
-    "tariff",
-    "tariffs",
-
-    "export",
-    "exports",
-
-    "supply chain",
-
-    "economic",
-    "economy",
-    "business",
-
-    "forecast",
-    "outlook",
-
-    "spending",
-    "capital",
-    "venture",
-    "startup"
-]
-
-
-# ============================================================
-# OBVIOUSLY IRRELEVANT TOPICS
+# EXCLUSION LIST — sports/lifestyle noise
+# only need this small list now
 # ============================================================
 
 EXCLUDED_KEYWORDS = [
-
-    # Sports
-    "wnba",
-    "nba",
-    "nfl",
-    "mlb",
-    "nhl",
-    "football",
-    "basketball",
-    "baseball",
-    "soccer",
-    "tennis",
-    "cricket",
-    "rugby",
-    "golf",
-
-    "match",
-    "matches",
-    "game",
-    "games",
-    "player",
-    "players",
-    "coach",
-    "coaching",
-
-    "score",
-    "scores",
-    "scored",
-
-    "recruiting",
-    "recruitment",
-
-    # Entertainment
-    "bollywood",
-    "hollywood",
-    "actress",
-    "actor",
-    "celebrity",
-    "celebrities",
-
-    "fashion",
-    "saree",
-    "red carpet",
-    "reality tv",
-
-    # Lifestyle
-    "recipe",
-    "recipes",
-    "cooking",
-    "travel",
-    "vacation",
-    "horoscope",
-    "wedding",
-
-    # Other obvious noise
-    "eagle viewing",
-    "field trip"
+    "wnba", "nba", "nfl", "mlb", "nhl",
+    "football", "basketball", "baseball",
+    "soccer", "tennis", "cricket", "rugby",
+    "bollywood", "hollywood", "actress", "actor",
+    "celebrity", "recipe", "cooking", "horoscope",
+    "wedding", "fashion", "travel", "vacation"
 ]
 
-
-# ============================================================
-# NARRATIVE KEYWORDS
-# ============================================================
-
-NARRATIVE_KEYWORDS = {
-
-    "AI": [
-
-        "artificial intelligence",
-        "ai",
-
-        "machine learning",
-        "generative ai",
-
-        "large language model",
-        "llm",
-
-        "chatbot",
-
-        "openai",
-        "anthropic",
-        "gemini",
-
-        "nvidia",
-
-        "gpu",
-        "gpus",
-
-        "data center",
-        "data centres",
-
-        "ai infrastructure",
-
-        "ai chip",
-        "ai chips",
-
-        "semiconductor",
-        "semiconductors"
-    ],
-
-
-    "EV": [
-
-        "electric vehicle",
-        "electric vehicles",
-
-        "ev",
-        "evs",
-
-        "battery",
-        "batteries",
-
-        "charging",
-
-        "tesla",
-        "byd",
-
-        "automotive",
-        "automaker",
-        "automakers",
-
-        "electric car",
-        "electric cars"
-    ],
-
-
-    "Quantum Computing": [
-
-        "quantum computing",
-        "quantum computer",
-        "quantum computers",
-
-        "quantum technology",
-
-        "quantum chip",
-        "quantum processor",
-
-        "quantum computing industry"
-    ],
-
-
-    "Semiconductors": [
-
-        "semiconductor",
-        "semiconductors",
-
-        "chip",
-        "chips",
-
-        "microchip",
-        "processor",
-
-        "gpu",
-        "gpus",
-
-        "cpu",
-        "cpus",
-
-        "foundry",
-
-        "tsmc",
-        "intel",
-        "amd",
-        "nvidia"
-    ]
-}
-
-
-# ============================================================
-# TEXT
-# ============================================================
-
-def get_article_text(article):
-
-    title = article.get("title") or ""
-    description = article.get("description") or ""
-    content = article.get("content") or ""
-
-    return f"{title} {description} {content}".lower()
-
-
-def get_article_title(article):
-
-    return (
-        article.get("title") or ""
-    ).lower()
-
-
-# ============================================================
-# KEYWORD MATCHING
-# ============================================================
-
-def keyword_matches(text, keyword):
-    """
-    Checks whether a keyword appears as a complete
-    word or phrase.
-
-    This prevents 'AI' from matching words such as:
-    'said', 'daily', etc.
-    """
-
-    pattern = (
-        r"\b"
-        + re.escape(keyword.lower())
-        + r"\b"
-    )
-
-    return re.search(
-        pattern,
-        text.lower()
-    ) is not None
-
-
-# ============================================================
-# EXCLUSION
-# ============================================================
-
 def contains_excluded_keyword(article):
-    """
-    Checks the article TITLE for obvious irrelevant
-    categories.
-
-    We primarily use the title here because words such
-    as 'game' or 'score' may appear in an otherwise
-    relevant article's description.
-    """
-
-    title = get_article_title(article)
-
+    title = (article.get("title") or "").lower()
     for keyword in EXCLUDED_KEYWORDS:
-
-        if keyword_matches(title, keyword):
+        pattern = r"\b" + re.escape(keyword) + r"\b"
+        if re.search(pattern, title):
             return True
-
     return False
 
+def get_article_text(article):
+    title       = article.get("title", "") or ""
+    description = article.get("description", "") or ""
+    content     = article.get("content", "") or ""
+    # title weighted more by repeating it
+    return f"{title} {title} {description} {content}"
 
-# ============================================================
-# NARRATIVE MATCHES
-# ============================================================
-
-def get_narrative_matches(article, narrative):
+def filter_articles(articles, narrative, minimum_score=0.05):
     """
-    Finds keywords related to the selected narrative.
+    Score articles by cosine similarity to the topic.
+    No hardcoded keyword lists needed.
+    minimum_score: 0.0 to 1.0 — how similar it must be
     """
+    if not articles:
+        return []
 
-    text = get_article_text(article)
+    # remove obvious noise first
+    candidates = [
+        a for a in articles
+        if not contains_excluded_keyword(a)
+    ]
 
-    keywords = NARRATIVE_KEYWORDS.get(
-        narrative,
-        []
+    if not candidates:
+        return []
+
+    # build text for each article
+    article_texts = [get_article_text(a) for a in candidates]
+
+    # the topic itself is the reference document
+    all_texts = [narrative] + article_texts
+
+    # TF-IDF vectorizer — converts text to numbers
+    vectorizer = TfidfVectorizer(
+        stop_words="english",
+        ngram_range=(1, 2),   # single words AND two-word phrases
+        min_df=1
     )
 
-    matches = []
+    try:
+        tfidf_matrix = vectorizer.fit_transform(all_texts)
+    except ValueError:
+        # fallback if vectorizer fails
+        return candidates
 
-    for keyword in keywords:
+    # cosine similarity between topic (row 0) and each article
+    topic_vector   = tfidf_matrix[0]
+    article_matrix = tfidf_matrix[1:]
 
-        if keyword_matches(text, keyword):
-            matches.append(keyword)
+    similarities = cosine_similarity(
+        topic_vector, article_matrix
+    ).flatten()
 
-    return matches
+    # attach scores and filter
+    scored = []
+    for i, article in enumerate(candidates):
+        score = round(float(similarities[i]), 4)
+        if score >= minimum_score:
+            article["relevance_score"] = score
+            scored.append(article)
 
-
-# ============================================================
-# MARKET MATCHES
-# ============================================================
-
-def get_market_matches(article):
-    """
-    Finds business/market-related keywords.
-    """
-
-    text = get_article_text(article)
-
-    matches = []
-
-    for keyword in MARKET_KEYWORDS:
-
-        if keyword_matches(text, keyword):
-            matches.append(keyword)
-
-    return matches
-
-
-# ============================================================
-# RELEVANCE SCORE
-# ============================================================
-
-def calculate_relevance_score(
-    article,
-    narrative
-):
-    """
-    Calculates a relevance score.
-
-    Narrative keyword = +3
-    Market keyword = +1
-    Narrative keyword in title = +3
-    """
-
-    narrative_matches = get_narrative_matches(
-        article,
-        narrative
-    )
-
-    market_matches = get_market_matches(
-        article
-    )
-
-    title = get_article_title(article)
-
-    score = 0
-
-    # --------------------------------------------------------
-    # Narrative relevance
-    # --------------------------------------------------------
-
-    score += (
-        len(narrative_matches) * 3
-    )
-
-    # --------------------------------------------------------
-    # Market/business relevance
-    # --------------------------------------------------------
-
-    score += len(market_matches)
-
-    # --------------------------------------------------------
-    # Extra weight for narrative appearing in title
-    # --------------------------------------------------------
-
-    for keyword in narrative_matches:
-
-        if keyword_matches(title, keyword):
-
-            score += 3
-
-    return score
-
-
-# ============================================================
-# FILTER ARTICLES
-# ============================================================
-
-def filter_articles(
-    articles,
-    narrative,
-    minimum_score=2
-):
-    """
-    Filters articles so that only relevant
-    market-narrative articles remain.
-
-    Default minimum score = 2.
-    """
-
-    filtered_articles = []
-
-    for article in articles:
-
-        # ----------------------------------------------------
-        # 1. Remove obvious irrelevant articles
-        # ----------------------------------------------------
-
-        if contains_excluded_keyword(article):
-            continue
-
-        # ----------------------------------------------------
-        # 2. Calculate relevance
-        # ----------------------------------------------------
-
-        score = calculate_relevance_score(
-            article,
-            narrative
-        )
-
-        # ----------------------------------------------------
-        # 3. Remove low-relevance articles
-        # ----------------------------------------------------
-
-        if score < minimum_score:
-            continue
-
-        # ----------------------------------------------------
-        # 4. Store useful metadata
-        # ----------------------------------------------------
-
-        article["relevance_score"] = score
-
-        article["narrative_matches"] = (
-            get_narrative_matches(
-                article,
-                narrative
-            )
-        )
-
-        article["market_matches"] = (
-            get_market_matches(article)
-        )
-
-        filtered_articles.append(article)
-
-    # --------------------------------------------------------
-    # 5. Highest relevance first
-    # --------------------------------------------------------
-
-    filtered_articles.sort(
-        key=lambda article: article["relevance_score"],
+    # highest similarity first
+    scored.sort(
+        key=lambda a: a["relevance_score"],
         reverse=True
     )
 
-    return filtered_articles
+    return scored
