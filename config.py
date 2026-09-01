@@ -12,7 +12,7 @@ load_dotenv()
 NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 NEWS_API_BASE_URL = "https://newsapi.org/v2/everything"
 NEWS_API_PAGE_SIZE = 10
-NEWS_API_TIMEOUT = 5
+NEWS_API_TIMEOUT = 10
 
 
 # ============================================================
@@ -95,6 +95,8 @@ def sanitize_topic(topic):
     cleaned = re.sub(r'[^\w\s-]', '', topic)
     return cleaned.strip()[:MAX_TOPIC_LENGTH]
 
-GNEWS_API_KEY     = os.getenv("GNEWS_API_KEY")
-GNEWS_BASE_URL    = "https://gnews.io/api/v4/search"
-GNEWS_MAX_RESULTS = 10
+CURRENTS_API_KEY = os.getenv("CURRENTS_API_KEY")
+
+CURRENTS_BASE_URL = "https://api.currentsapi.services/v1/search"
+
+CURRENTS_MAX_RESULTS = 10
