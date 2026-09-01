@@ -18,33 +18,25 @@ def fetch_news(topic):
     if not topic or not topic.strip():
         return []
 
-    # Use the value from config.py unless a value is supplied
-    if max_articles is None:
-        max_articles = GNEWS_MAX_RESULTS
+    # ========================================================
+    # TRY GNEWS
+    # ========================================================
 
-    query = build_search_query(narrative)
+    print(f"\nTrying GNews for: {topic}")
 
-    params = {
-        "q": query,
-        "lang": "en",
-        "sortby": "publishedAt",
-        "max": max_articles,
-        "apikey": GNEWS_API_KEY
-    }
+    articles = fetch_gnews(topic)
 
-    try:
-
-        response = requests.get(
-            GNEWS_BASE_URL,
-            params=params,
-            timeout=NEWS_API_TIMEOUT
+    if articles:
+        print(
+            f"✓ GNews returned "
+            f"{len(articles)} articles"
         )
 
-        response.raise_for_status()
+        return articles
 
-        data = response.json()
-
-    except requests.exceptions.Timeout:
+    # ========================================================
+    # FALLBACK TO CURRENTS
+    # ========================================================
 
     print(
         f"⚠ GNews failed or returned no articles "
