@@ -106,6 +106,15 @@ def fetch_news(narrative, max_articles=None):
 
         data = response.json()
 
+    ## If GNews Hit the Limit !
+    except requests.exceptions.HTTPError as e:
+        print(
+            f"GNews HTTP error for topic {narrative}: {e}"
+        )
+        if response.status_code in (403, 429):
+            return None
+        return []
+
     except requests.exceptions.Timeout:
 
         print(

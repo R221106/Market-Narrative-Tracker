@@ -37,6 +37,9 @@ def get_filtered_articles(topic):
 
     articles = fetch_news(topic)
 
+    if articles is None:
+        return None
+    
     return filter_articles(
         articles,
         topic,
@@ -87,6 +90,11 @@ def news():
 
     articles = get_filtered_articles(topic)
 
+    if articles is None:
+        return jsonify({
+            "error":"News service temporarily unavailable. Try again later !"
+        }),503
+
     return jsonify({
         "topic": topic,
         "articles": articles
@@ -104,6 +112,11 @@ def sentiment():
         return topic_error()
 
     articles = get_filtered_articles(topic)
+
+    if articles is None:
+        return jsonify({
+            "error": "News service temporarily unavailable. Try again later!"
+        }), 503
 
     return jsonify({
         "topic": topic,
@@ -123,6 +136,11 @@ def keywords():
         return topic_error()
 
     articles = get_filtered_articles(topic)
+
+    if articles is None:
+        return jsonify({
+            "error": "News service temporarily unavailable. Try again later!"
+        }), 503
 
     top_keywords = extract_keywords(articles)
 
@@ -145,6 +163,11 @@ def trend():
 
     articles = get_filtered_articles(topic)
 
+    if articles is None:
+        return jsonify({
+            "error": "News service temporarily unavailable. Try again later!"
+        }), 503
+
     return jsonify(
         analyze_trend(articles, topic)
     )
@@ -162,6 +185,11 @@ def sources():
 
     articles = get_filtered_articles(topic)
 
+    if articles is None:
+        return jsonify({
+            "error": "News service temporarily unavailable. Try again later!"
+        }), 503
+
     return jsonify({
         "topic": topic,
         "sources": analyze_sources(articles)
@@ -178,6 +206,11 @@ def topics():
     for t in WATCHLIST_TOPICS:
 
         articles = get_filtered_articles(t)
+
+        if articles is None:
+            return jsonify({
+                "error": "News service temporarily unavailable. Try again later!"
+            }), 503
 
         topic_data.append({
             "topic": t,
@@ -213,6 +246,11 @@ def dashboard():
 
         articles = get_filtered_articles(t)
 
+        if articles is None:
+            return jsonify({
+                "error": "News service temporarily unavailable. Try again later!"
+            }), 503
+
         topic_data.append({
             "topic": t,
             "article_count": len(articles)
@@ -240,6 +278,11 @@ def summary():
         return topic_error()
 
     articles = get_filtered_articles(topic)
+
+    if articles is None:
+        return jsonify({
+            "error": "News service temporarily unavailable. Try again later!"
+        }), 503
 
     sentiment = analyze_articles(articles)
 
