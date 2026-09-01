@@ -2,6 +2,10 @@ const API_URL = "";
 async function getData(topic) {
     try{
         const response=await fetch( `${API_URL}/api/news?topic=${encodeURIComponent(topic)}`); // fetching the data
+        if (response.status === 503) {
+            showError("News service is temporarily unavailable. Try again later!");
+            return;
+        }
         if(!response.ok) throw new Error("Failed to fetch the error!")
         const data = await response.json();
         fetchNews(data.articles);
@@ -12,6 +16,15 @@ async function getData(topic) {
         searchResult.innerHTML=`<p>Unable to load news. Please Try Again!</p>`;
     } 
 }
+function showError(message){
+    const container = document.getElementById("search-results")
+    container.innerHTML=`
+        <div class="error-message">
+            <p>${message}</p>
+        </div>
+    `;
+}
+
 function fetchNews(article){
     const searchResult = document.getElementById("search-results")
     searchResult.innerHTML="";
@@ -106,3 +119,10 @@ if(sidebar && toggleMenu){
         }
     });
 }
+
+window.addEventListener("load",function(){
+    const loader= document.getElementById("page-loader");
+    if(loader){
+        loader.style.display="none";
+    } 
+})

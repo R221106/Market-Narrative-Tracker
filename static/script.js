@@ -55,5 +55,11 @@ function displayKeywords(keyword){
         track.appendChild(card);
     });
 }
+window.addEventListener("load", function () {
+    const loader = document.getElementById("page-loader");
+    if (loader) {
+        loader.style.display = "none";
+    }
+});
 
 getkeywords();

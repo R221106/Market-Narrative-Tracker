@@ -1,8 +1,24 @@
 // Dashboard.js
 const API_URL = "";
+function showDashboardError(message) {
+    const container = document.getElementById("news-container");
+
+    if (container) {
+        container.innerHTML = `
+            <div class="error-message">
+                <p>${message}</p>
+            </div>
+        `;
+    }
+}
 async function loadDashboard() {
     try {
         const response = await fetch(`${API_URL}/api/dashboard`);
+
+        if (response.status === 503) {
+            showDashboardError("News service is temporarily unavailable. Try again later!");
+            return;
+        }
 
         if (!response.ok) {
             throw new Error("Failed to load dashboard data");
@@ -14,6 +30,7 @@ async function loadDashboard() {
 
     } catch (error) {
         console.error("Dashboard error:", error);
+        showDashboardError("Unable to load dashboard data.");
     }
 }
 
@@ -80,6 +97,12 @@ async function loadHeadlines(topic) {
             fetch(`${API_URL}/api/news?topic=${encodeURIComponent(topic)}`),
             fetch(`${API_URL}/api/sentiment?topic=${encodeURIComponent(topic)}`
         )]);
+        if (newsResponse.status === 503 || sentimelResponse.status === 503) {
+            showDashboardError(
+                "News service is temporarily unavailable. Try again later!"
+            );
+            return;
+        }
         if (!newsResponse.ok) {
             throw new Error("Failed to load headlines"); }
         if (!sentimelResponse.ok) {
@@ -118,6 +141,9 @@ async function loadHeadlines(topic) {
 
     } catch (error) {
         console.error("Headlines error:", error);
+        showDashboardError(
+            "Unable to load news. Please try again later!"
+        );
     }
 }
 
@@ -152,6 +178,16 @@ async function loadTrending(topic) {
     try {
         const response = await fetch( `${API_URL}/api/trend?topic=${encodeURIComponent(topic)}`
         );
+        const trendInfo=document.getElementById("trend-info");
+        if (response.status === 503) {
+            if (trendInfo) {
+                trendInfo.innerHTML =
+                    `<p class="error-message">
+                        News service is temporarily unavailable. Try again later!
+                    </p>`;
+            }
+            return;
+        }
         if (!response.ok) {
             throw new Error("Failed to load dashboard data");
         }
@@ -160,7 +196,6 @@ async function loadTrending(topic) {
         const counts=data.buckets.map(bucket=> bucket.count);
         const trendTopic=data.topic;
         const trend=data.trend;
-        const trendInfo=document.getElementById("trend-info");
         trendInfo.innerHTML=`Topic: ${trendTopic} | Trend:${trend}`;
         const TrendChart = document.getElementById("trend-chart");
         if (!TrendChart) {
@@ -202,12 +237,31 @@ async function loadTrending(topic) {
 
     } catch (error) {
         console.error("Dashboard error:", error);
+        const trendInfo = document.getElementById("trend-info");
+        if (trendInfo) {
+            trendInfo.innerHTML = `
+                <p class="error-message">
+                    Unable to load trend data. Please try again later!
+                </p>
+            `;
+        }
     }
 }
 
 async function loadSources(topic){
   try {
         const response = await fetch(`${API_URL}/api/sources?topic=${encodeURIComponent(topic)}`);
+        if (response.status === 503) {
+            const container = document.getElementById("top-sources-container");
+            if (container) {
+                container.innerHTML = `
+                    <div class="error-message">
+                        <p>News service is temporarily unavailable. Try again later!</p>
+                    </div>
+                `;
+            }
+            return;
+        }
         if (!response.ok) throw new Error("Failed to load sources data");
         const data = await response.json();
         getSources(data.sources,topic);
@@ -215,6 +269,14 @@ async function loadSources(topic){
 
     } catch (error) {
         console.error("Top Sources error:", error);
+        const container = document.getElementById("top-sources-container");
+        if (container) {
+            container.innerHTML = `
+                <div class="error-message">
+                    <p>Unable to load top sources. Please try again later!</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -249,6 +311,14 @@ async function loadSummary(topic){
     const summaryContent = document.getElementById("summary-content");
     try {
         const response = await fetch(`${API_URL}/api/summary?topic=${encodeURIComponent(topic)}`);
+        if (response.status === 503) {
+            summaryContent.innerHTML = `
+                <div class="error-message">
+                    <p>News service is temporarily unavailable. Try again later!</p>
+                </div>
+            `;
+            return;
+        }
         if (!response.ok) throw new Error("Failed to load AI Summary");
         const data = await response.json();
         console.log(data.summary);
@@ -293,5 +363,12 @@ searchButton.addEventListener("click",performSearch);
 searchInput.addEventListener("keydown",function(event){
     if(event.key==="Enter") performSearch();
 });
+
+window.addEventListener("load",function(){
+    const loader= document.getElementById("page-loader");
+    if(loader){
+        loader.style.display="none";
+    } 
+})
 loadDashboard();
 loadTopSearches();
